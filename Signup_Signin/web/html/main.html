@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenido | Neo-Bank</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+  }
+
+  .main-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* ligero overlay para que el texto se vea */
+  }
+
+  .logo-img {
+    width: 150px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 2px solid #fff;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+
+  .saldo {
+    font-weight: bold;
+    color: #00ff00;
+  }
+</style>
+</head>
+<body>
+  <div class="main-layout">
+    <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
+
+    <h1 id="bienvenida">Bienvenido, Usuario</h1>
+    <p>Tu saldo en cuenta es: <span class="saldo" id="saldoUsuario">0 €</span></p>
+  </div>
+
+    <script src="../js/main.js">
+  </script>
+</body>
+</html>
