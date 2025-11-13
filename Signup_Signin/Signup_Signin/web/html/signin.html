@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in| Neo-Bank</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body background="../images/fondo.jpg">
+ <div class="main-layout">
+
+ <div class="sidebar">
+ <div class="logo-area">
+ <img src="../images/logo.jpg" alt="Quantum Bank Logo" class="logo-img">
+ </div>
+ <nav class="sidebar-nav">
+ <a href="../index.html" class="nav-item">🏦 Homepage </a>
+ <a href="signin.html" class="nav-item active">🔒 Log in</a>
+ <a href="signup.html" class="nav-item ">📝
+Register</a>
+ </nav>
+ </div>
+
+ <div class="form-container">
+ <h2>Client Area</h2>
+ <form id="signInForm" action="http://localhost:8080/CRUDBankServerSide/webresources/customer/sigin/" method="get">
+                                                <label for="Usuario">User</label>
+                                                <br>
+                                                <input type="text" id="tfEmail" >
+                                                <br>
+                                                <p id="error_usu"></p>
+                                                 <br>
+                                                  <label for="Contraseña">Password</label>
+                                                  <br>
+                                                  <div class="password-wrapper">
+  <input type="password" id="tfPassword" name="password" required placeholder="Contraseña">
+  <span id="togglePassword" class="eye-icon">&#128065;</span> <!-- 👁️ emoji de ojo -->
+</div>
+<p id="error_pass"></p>
+                                                   <br>
+                                                   <button class="recu_pass">You have forgotten your password?</button>
+                                                   <div class="mbr-section-btn mt-3">
+                                            <button class="acceder" id="btSignIn" onclick="handleSignInOnClick(event);" >Entry</button>
+                                              
+                                                   </div>
+                                                   
+                                            </form>
+  <div id="responseMsg"></div>
+                                           
+                                        </div>
+      
+					 </div>
+                                        
+                                     
+				          
+			
+
+<script src="../js/signin.js"></script>
+</body>
+</html>
