@@ -7,6 +7,6 @@
       document.getElementById('saldoUsuario').textContent = `${saldo} €`;
     } else {
       // Si no hay datos, redirigimos al login
-      window.location.href = "login.html";
+      window.location.href = "signin.html";
     }
 

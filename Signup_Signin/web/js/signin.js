@@ -118,7 +118,7 @@ return;
                                    msgBox.style.borderRadius="10px";
                               setTimeout(() => {
                                 signInForm.submit() ;
-                               window.location.href = "./html/main.html";     }, 2000);
+                               window.location.href = "main.html"; }, 2000);
                             
                                       
                         })
