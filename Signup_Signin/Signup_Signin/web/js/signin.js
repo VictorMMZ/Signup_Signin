@@ -20,7 +20,7 @@ msgBox.style.display = 'none';
                     event.stopPropagation();
                     //Validar que email y password están informados
                     if(tfEmail.value.trim()===""||tfPassword.value.trim()===""){
-                  document.getElementById("error_pass").innerHTML="<p> .</p>";
+                  document.getElementById("error_pass").innerHTML="<p> You must fill in both fields</p>";
                     return;//Validar que email and password cumplen longitud
                 }            
         if(tfEmail.value.length>255){
