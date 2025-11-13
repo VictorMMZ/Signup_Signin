@@ -20,27 +20,27 @@ msgBox.style.display = 'none';
                     event.stopPropagation();
                     //Validar que email y password están informados
                     if(tfEmail.value.trim()===""||tfPassword.value.trim()===""){
-                  document.getElementById("error_pass").innerHTML="<p> .</p>";
+                  document.getElementById("error_pass").innerHTML="<p> You must fill in both fields</p>";
                     return;//Validar que email and password cumplen longitud
                 }            
         if(tfEmail.value.length>255){
                         document.getElementById("error_usu").innerHTML="<p> The email cannot be longer than 255 characters.</p>";
                         msgBox.textContent = '';
-msgBox.style.display = 'none';
+                        msgBox.style.display = 'none';
                     return;
                 }
                 if (tfPassword.value.length>255){
                     document.getElementById("error_pass").innerHTML="<p> The password cannot exceed 255 characters.</p>";
                     msgBox.textContent = '';
-msgBox.style.display = 'none';
+                    msgBox.style.display = 'none';
                 //Validar formato de email
                 return;
             }
             if(!emailregex.test(tfEmail.value.trim())){
-document.getElementById("error_usu").innerHTML="<p> Incorrect email format.</p>";
-msgBox.textContent = '';
-msgBox.style.display = 'none';
-return;
+                document.getElementById("error_usu").innerHTML="<p> Incorrect email format.</p>";
+                    msgBox.textContent = '';
+                    msgBox.style.display = 'none';
+                                return;
             }
             
             
@@ -98,15 +98,14 @@ return;
     const xml = parser.parseFromString(xmlText, "application/xml");
 
     const nombre = xml.getElementsByTagName('firstName')[0].textContent;
-    const saldo = xml.getElementsByTagName('balance')[0].textContent;
     const id = xml.getElementsByTagName('id')[0].textContent;
 
     // Guardamos en localStorage
     localStorage.setItem('nombre', nombre);
-    localStorage.setItem('saldo', saldo);
+   
     localStorage.setItem('id', id);
 
-                            
+                            //en caso de que nos de el okey
                             
                             msgBox.className = 'success';
                             msgBox.textContent = 'Customer signed in successfully!';
@@ -115,10 +114,10 @@ return;
                             msgBox.style.padding="10px";
                             msgBox.style.border="1px solid black";
                             msgBox.style.backgroundColor="lightgreen" ;
-                                   msgBox.style.borderRadius="10px";
+                            msgBox.style.borderRadius="10px";
                               setTimeout(() => {
                                 signInForm.submit() ;
-                               window.location.href = "main.html"; }, 2000);
+                                 window.location.href = "main.html"; }, 2000);
                             
                                       
                         })
@@ -130,17 +129,17 @@ return;
                             msgBox.style.padding="10px";
                             msgBox.style.border="1px solid black";
                             msgBox.style.backgroundColor="lightcoral";
-                             msgBox.style.borderRadius="10px";
-                             signInForm.action = "http://localhost:8080/CRUDBankServerSide/webresources/customer/sigin/";
+                            msgBox.style.borderRadius="10px";
+                               signInForm.action = "http://localhost:8080/CRUDBankServerSide/webresources/customer/sigin/";
                         }
                     );
             
  
-msgBox.textContent = '';
-msgBox.style.display = 'none';
+                                        msgBox.textContent = '';
+                                        msgBox.style.display = 'none';
           }
           
-          const togglePassword = document.getElementById('togglePassword');
+const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('tfPassword');
 
 togglePassword.addEventListener('click', () => {
@@ -148,6 +147,6 @@ togglePassword.addEventListener('click', () => {
   passwordInput.setAttribute('type', type);
 
 });
-                    //Si no hay error envianmos formulario estableciendo path params
+                    
                   
 
