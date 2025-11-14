@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulario de Registro | Neo-Bank</title>
+<link rel="stylesheet" href="../css/style.css">
+
+
+</head>
+<body background="../images/fondo.jpg">
+    <div class="main-layout">
+       
+        <div class="sidebar">
+            <div class="logo-area">
+    <img src="../images/logo.jpg" alt="Quantum Bank Logo" class="logo-img">
+    </div>
+            <nav class="sidebar-nav">
+                <a href="../index.html" class="nav-item">🏦 Homepage</a>
+                <a href="signin.html" class="nav-item">🔒 Sign in</a>
+                <a href="signup.html" class="nav-item active">📝 Sign up</a>
+            </nav>
+        </div>
+       
+        <div class="form-container">
+            <h2>REGISTRATION FORM</h2>
+           <form action="http://localhost:8080/CRUDBankServerSide/webresources/customer"
+            id="registro"
+            onsubmit="handleSignUpOnClick(event);">
+
+
+                <label for="nombre">First Name:</label>
+                <input type="text" id="nombre" name="nombre"  placeholder="Your first name">
+                <div class="error" id="errorNombre"></div>
+
+
+                <label for="middleInitial">Middle Initial:</label>
+                <input type="text" id="middleInitial" name="middleInitial" placeholder="Middle Initial">
+                <div class="error" id="errorMiddleInitial"></div>
+
+
+                <label for="apellidos">Last Name:</label>
+                <input type="text" id="apellidos" name="apellidos"  placeholder="Your last name">
+                <div class="error" id="errorApellidos"></div>
+
+
+                <label for="telefono">Phone:</label>
+                <input type="tel" id="telefono" name="telefono"  placeholder="+34 600 000 000">
+                <div class="error" id="errorTelefono"></div>
+               
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email"  placeholder="example@email.com">
+                <div class="error" id="errorEmail"></div>
+
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password"  placeholder="Create your password">
+                <div class="error" id="errorPassword"></div>
+               
+                <div class="address-group">
+                    <div class="address-col">
+                        <label for="calle">Street:</label>
+                        <input type="text" id="calle" name="calle"  placeholder="Street">
+                        <div class="error" id="errorCalle"></div>
+
+
+                        <label for="ciudad">City:</label>
+                        <input type="text" id="ciudad" name="ciudad"  placeholder="City">
+                        <div class="error" id="errorCiudad"></div>
+                    </div>
+                   
+                    <div class="address-col">
+                        <label for="pais">State:</label>
+                        <input type="text" id="pais" name="pais"  placeholder="State">
+                        <div class="error" id="errorPais"></div>
+
+
+                        <label for="zip">ZIP Code:</label>
+                        <input type="text" id="zip" name="zip"  placeholder="28001">
+                        <div class="error" id="errorZip"></div>
+                    </div>
+                </div>
+               
+                <button type="submit" class="neon-button">CREATE ACCOUNT</button>
+
+
+                <div id="responseMsg" class="msg-box" style="display:none;"></div>
+           
+            </form>
+        </div>
+    </div>
+
+
+<script src="../js/signup.js"></script>
+
+
+</body>
+</html>
