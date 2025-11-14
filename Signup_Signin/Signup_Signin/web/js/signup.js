@@ -74,7 +74,7 @@ const regexMiddleInitial = /^[A-Za-z]{1}$/;                             // Inici
 
 // --- 2. FUNCIÓN DE VALIDACIÓN GENÉRICA ---
 // Función para validar un campo genérico.
-function validateField(input, errorElement, regex, msg) {
+function validarCampo(input, errorElement, regex, msg) {
     const valor = input.value.trim();
    
     // 1. Revisa si el campo está vacío, si es el caso le mostrará el mensaje de "obligatorio"
@@ -103,11 +103,11 @@ function validateField(input, errorElement, regex, msg) {
 
 // --- 3. LÓGICA DE VALIDACIÓN FINAL Y ENVÍO ---
 // Valida todos los campos antes de enviar el formulario.
-function validateAllFields() {
-    let isValid = true;
+function validarTodosLosCampos() {
+    let esValido  = true;
    
     // Lista de campos y sus parámetros de validación para iterar fácilmente
-    const validationMap = [
+    const camposAValidar = [
         // MENSAJES
         { input: nombreInput, error: errorNombre, regex: regexNombre, msg: "Solo letras y espacios (2 a 100 caracteres)." },
         { input: middleInitialInput, error: errorMiddleInitial, regex: regexMiddleInitial, msg: "Debe ser exactamente una letra." },
@@ -144,16 +144,17 @@ function validateAllFields() {
 
 
     // Recorrer y validar los demás campos
-    validationMap.forEach(f => {
+    // Si una validacion falla dentro del foreach, cambia a false
+    camposAValidar.forEach(campo => {
         // Usamos la misma lógica de validación para todos los campos requeridos
-        if (!validateField(f.input, f.error, f.regex, f.msg)) {
-            isValid = false;
+        if (!validarCampo(campo.input, campo.error, campo.regex, campo.msg)) {
+            esValido  = false;
         }
     });
 
 
     // Si la validación es errónea
-    if (!isValid) {
+    if (!esValido ) {
          return false;
     }
    
@@ -166,7 +167,7 @@ function validateAllFields() {
  * Estructura XML  para la API del servidor.
  * * Se construye el XML con los datos recolectados, que ya han sido validados.
  */
-function createCustomerXML() {
+function crearXMLCliente() {
     const data = {
         firstName: nombreInput.value.trim(),
         lastName: apellidosInput.value.trim(),
@@ -202,10 +203,10 @@ function createCustomerXML() {
 /**
  * Envía la solicitud POST al servidor para el registro de forma asíncrona (Fetch API).
  */
-function sendSignUpRequest (){
+function enviarSolicitudRegistro (){
     const registerForm = document.getElementById("registro");
     const msgBox = document.getElementById("responseMsg");
-    const customerXML = createCustomerXML();
+    const customerXML = crearXMLCliente();
    
     msgBox.style.display = 'none'; // Oculta mensajes previos
 
@@ -277,14 +278,14 @@ function sendSignUpRequest (){
  */
 function handleSignUpOnClick(event) {
     // 1. Detener la acción predeterminada del navegador (para evitar la recarga de página)
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault();   // Detiene el proceso de envío de formulario nativo para que podamos manejarlo con js
+    event.stopPropagation();  // Bloquea que el evento "suba" por el DOM, garantizando que solo esta función lo maneje.
 
 
     // 2. Validar todos los campos del formulario
-    if (validateAllFields()) {
+    if (validarTodosLosCampos()) {
        // 3. Si la validación es exitosa, se procede a enviar la solicitud al servidor
-        sendSignUpRequest();
+        enviarSolicitudRegistro();
     }
 }
 
