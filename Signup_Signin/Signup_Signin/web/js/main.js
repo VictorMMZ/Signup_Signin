@@ -1,8 +1,8 @@
  // Recuperamos los datos del usuario desde localStorage
-    const nombre = localStorage.getItem('nombre');
-    const saldo = localStorage.getItem('saldo');
+    const nombre = sessionStorage.getItem('nombre');
 
-    if (nombre && saldo) {
+
+    if (nombre) {
       document.getElementById('bienvenida').textContent = `Welcome, ${nombre}`;
 
     } else {

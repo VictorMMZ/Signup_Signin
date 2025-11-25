@@ -1,65 +1,80 @@
-function handleSignInOnClick (event){
-     const msgBox = document.getElementById("responseMsg");
-    msgBox.textContent = '';
-msgBox.style.display = 'none';
-    document.getElementById("error_usu").innerHTML="";
-    document.getElementById("error_pass").innerHTML="";
-               const emailregex=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+ 
+ //creamos el objeto customer donde guardaremos los datos
+ class Customer{
+     constructor(nombre,id){
+         this.nombre=nombre,
+         this.id=id
+     }}
+    
+        function handleSignInOnClick (event){
+                    const msgBox = document.getElementById("responseMsg");
+                    //msgBox.textContent = '';
+                    //msgBox.style.display = 'none';
+                    
+                    document.getElementById("error_usu").innerHTML="";
+                    
+                    document.getElementById("error_pass").innerHTML="";
+               
                     //Obtenemos los objetos para los elementos del form
                     const tfEmail=document.getElementById("tfEmail");
+                    
                     const tfPassword=document.getElementById("tfPassword");
+                    
                     const signInForm=document.getElementById("signInForm");
                 
                     //Creamos un objeto RegExp para validar el email
-                       tfEmail.innerHTML="";
-                    tfPassword.innerHTML="";
+                    const emailregex=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                       //tfEmail.innerHTML="";
+                       //tfPassword.innerHTML="";
                    
                     //Detenemos la propagación de eventos y la acción por defecto
                     //del formulario
                     event.preventDefault();
                     event.stopPropagation();
                     //Validar que email y password están informados
+                    
                     if(tfEmail.value.trim()===""||tfPassword.value.trim()===""){
-                  document.getElementById("error_pass").innerHTML="<p> You must fill in both fields</p>";
+                        document.getElementById("error_pass").innerHTML="<p> You must fill in both fields</p>";
                     return;//Validar que email and password cumplen longitud
-                }            
-        if(tfEmail.value.length>255){
+                    }   
+                    
+                    if(tfEmail.value.length>255){
                         document.getElementById("error_usu").innerHTML="<p> The email cannot be longer than 255 characters.</p>";
-                        msgBox.textContent = '';
-                        msgBox.style.display = 'none';
-                    return;
-                }
-                if (tfPassword.value.length>255){
-                    document.getElementById("error_pass").innerHTML="<p> The password cannot exceed 255 characters.</p>";
-                    msgBox.textContent = '';
-                    msgBox.style.display = 'none';
+                            msgBox.textContent = '';
+                                 msgBox.style.display = 'none';
+                    return
+                    
+                    }
+                    if (tfPassword.value.length>255){
+                        document.getElementById("error_pass").innerHTML="<p> The password cannot exceed 255 characters.</p>";
+                            msgBox.textContent = '';
+                                msgBox.style.display = 'none';
                 //Validar formato de email
-                return;
-            }
-            if(!emailregex.test(tfEmail.value.trim())){
-                document.getElementById("error_usu").innerHTML="<p> Incorrect email format.</p>";
-                    msgBox.textContent = '';
-                    msgBox.style.display = 'none';
+                    return;
+                    }
+                    if(!emailregex.test(tfEmail.value.trim())){
+                        document.getElementById("error_usu").innerHTML="<p> Incorrect email format.</p>";
+                            msgBox.textContent = '';
+                                msgBox.style.display = 'none';
                                 return;
-            }
+                    }
             
             
             
              
-             const valueTfEmail=tfEmail.value.trim();
-                const valueTfPassword=tfPassword.value.trim();
+            const valueTfEmail=tfEmail.value.trim();
+            const valueTfPassword=tfPassword.value.trim();
             //hacerlo con fecth mirar codigo 
-            //progrmacion funcional,le pasas a una funcion como parametro otra funcion
+           
 
   
  
-          signInForm.action =signInForm.action +
-                    `${encodeURIComponent(valueTfEmail)}/${encodeURIComponent(valueTfPassword)}`;
+            urlnueva =signInForm.action +`${encodeURIComponent(valueTfEmail)}/${encodeURIComponent(valueTfPassword)}`;
              
              //signInForm.submit() ;
              
              
-             fetch(signInForm.action, 
+             fetch(urlnueva, 
                     {
                         method: 'GET',
                         headers: {
@@ -93,17 +108,18 @@ msgBox.style.display = 'none';
                       })
                         //Procesado de respuesta OK 
                         .then(xmlText => {
-    // Parseamos el XML
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlText, "application/xml");
+                           // Parseamos el XML
+                           const parser = new DOMParser();
+                           const xml = parser.parseFromString(xmlText, "application/xml");
+                           const nombre = xml.getElementsByTagName('firstName')[0].textContent;
+                           const id = xml.getElementsByTagName('id')[0].textContent;
+                           
+                           //guardamos los datos en el objeto Customer
+                             usuario1= new Costumer(nombre,id);
 
-    const nombre = xml.getElementsByTagName('firstName')[0].textContent;
-    const id = xml.getElementsByTagName('id')[0].textContent;
-
-    // Guardamos en localStorage
-    localStorage.setItem('nombre', nombre);
-   
-    localStorage.setItem('id', id);
+                           // Guardamos en localStorage
+                              sessionStorage.setItem('nombre', nombre);
+                              sessionStorage.setItem('id', id);
 
                             //en caso de que nos de el okey
                             
@@ -135,16 +151,18 @@ msgBox.style.display = 'none';
                     );
             
  
-                                        msgBox.textContent = '';
-                                        msgBox.style.display = 'none';
+                                msgBox.textContent = '';
+                                msgBox.style.display = 'none';
           }
           
+//----------------------------------------------------------------------------------------------------------------------------------------------------          
+//contraseña visible para accesibilidad
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('tfPassword');
 
-togglePassword.addEventListener('click', () => {
-  const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-  passwordInput.setAttribute('type', type);
+    togglePassword.addEventListener('click', () => {
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
 
 });
                     
