@@ -53,13 +53,15 @@ msgBox.style.display = 'none';
 
   
  
-          signInForm.action =signInForm.action +
+        const baseUrl = "http://localhost:8080/CRUDBankServerSide/webresources/customer/sigin/";
+ 
+        const  newpath =baseUrl +
                     `${encodeURIComponent(valueTfEmail)}/${encodeURIComponent(valueTfPassword)}`;
              
              //signInForm.submit() ;
              
              
-             fetch(signInForm.action, 
+           fetch(newpath, 
                     {
                         method: 'GET',
                         headers: {
@@ -93,28 +95,34 @@ msgBox.style.display = 'none';
                       })
                         //Procesado de respuesta OK 
                         .then(xmlText => {
-    // Parseamos el XML
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlText, "application/xml");
-
-    const nombre = xml.getElementsByTagName('firstName')[0].textContent;
-    const id = xml.getElementsByTagName('id')[0].textContent;
-
-    // Guardamos en localStorage
-    localStorage.setItem('nombre', nombre);
-   
-    localStorage.setItem('id', id);
-
-                            //en caso de que nos de el okey
+    //en caso de que nos de el okey
                             
                             msgBox.className = 'success';
-                            msgBox.textContent = 'Customer signed in successfully!';
                             msgBox.style.display = 'block';
                             msgBox.style.color = '#ffffff';
                             msgBox.style.padding="10px";
                             msgBox.style.border="1px solid black";
                             msgBox.style.backgroundColor="lightgreen" ;
                             msgBox.style.borderRadius="10px";
+                             storeResponseXMLData(xmlText);
+                        //get customer object from storage
+                            const customerName=sessionStorage.getItem("customer.firstName");
+                        //create XML from customer's data stored
+                            const customerXML=`<customer>
+                                <city>${sessionStorage.getItem("customer.city")}</city>
+                                <email>${sessionStorage.getItem("customer.email")}</email>
+                                <firstName>${sessionStorage.getItem("customer.firstName")}</firstName>
+                                <id>${sessionStorage.getItem("customer.id")}</id>
+                                <lastName>${sessionStorage.getItem("customer.lastName")}</lastName>
+                                <middleInitial>${sessionStorage.getItem("customer.middleInitial")}</middleInitial>
+                                <password>${sessionStorage.getItem("customer.password")}</password>
+                                <phone>${sessionStorage.getItem("customer.phone")}</phone>
+                                <state>${sessionStorage.getItem("customer.state")}</state>
+                                <street>${sessionStorage.getItem("customer.street")}</street>
+                                <zip>${sessionStorage.getItem("customer.zip")}</zip>
+                                </customer>`.trim();
+                            msgBox.textContent = 'Customer signed in successfully!';
+             
                               setTimeout(() => {
                                 signInForm.submit() ;
                                  window.location.href = "main.html"; }, 2000);
@@ -130,14 +138,45 @@ msgBox.style.display = 'none';
                             msgBox.style.border="1px solid black";
                             msgBox.style.backgroundColor="lightcoral";
                             msgBox.style.borderRadius="10px";
-                               signInForm.action = "http://localhost:8080/CRUDBankServerSide/webresources/customer/sigin/";
+                               
                         }
                     );
             
- 
-                                        msgBox.textContent = '';
-                                        msgBox.style.display = 'none';
-          }
+            }
+            
+             function storeResponseXMLData (xmlString){
+                //Create XML parser
+                const parser = new DOMParser();
+                //Parse response XML data
+                const xmlDoc=parser.parseFromString(xmlString,"application/xml");
+                //Create Customer object with data received in response
+                const customer=new Customer(
+                    xmlDoc.getElementsByTagName("id")[0].textContent,
+                    xmlDoc.getElementsByTagName("firstName")[0].textContent,
+                    xmlDoc.getElementsByTagName("lastName")[0].textContent,
+                    xmlDoc.getElementsByTagName("middleInitial")[0].textContent,
+                    xmlDoc.getElementsByTagName("street")[0].textContent,
+                    xmlDoc.getElementsByTagName("city")[0].textContent,
+                    xmlDoc.getElementsByTagName("state")[0].textContent,
+                    xmlDoc.getElementsByTagName("zip")[0].textContent,
+                    xmlDoc.getElementsByTagName("phone")[0].textContent,
+                    xmlDoc.getElementsByTagName("email")[0].textContent,
+                    xmlDoc.getElementsByTagName("password")[0].textContent,
+                );
+                // Save data to sessionStorage
+                sessionStorage.setItem("customer.id", customer.id);
+                sessionStorage.setItem("customer.firstName", customer.firstName);
+                sessionStorage.setItem("customer.lastName", customer.lastName);
+                sessionStorage.setItem("customer.middleInitial", customer.middleInitial);
+                sessionStorage.setItem("customer.street", customer.street);
+                sessionStorage.setItem("customer.city", customer.city);
+                sessionStorage.setItem("customer.state", customer.state);
+                sessionStorage.setItem("customer.zip", customer.zip);
+                sessionStorage.setItem("customer.phone", customer.phone);
+                sessionStorage.setItem("customer.email", customer.email);
+                sessionStorage.setItem("customer.password", customer.password);
+                console.log("Customer's data for "+customer.id+" saved on session storage.");
+            }
           
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('tfPassword');
@@ -147,6 +186,4 @@ togglePassword.addEventListener('click', () => {
   passwordInput.setAttribute('type', type);
 
 });
-                    
                   
-
