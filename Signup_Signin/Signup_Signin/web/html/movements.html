@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../css/style.css">
+
+    </head>
+    
+        <body background="../images/fondo.jpg">
+        <div class="sidebar">
+        <div class="logo-area">
+            
+       <a href="../index.html">
+            <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
+       </a>
+            
+        </div>
+          </div>
+            <div class="nav-var">
+                <nav>
+                    <a href="../index.html" class="nav-item active">🔒 Sign out</a>
+                </nav>
+            </div>
+        <div class ="Menu">
+            <button class="ver" id="btver" onclick="prueba(event);" >Ver Movimientos</button>
+             <button>Hacer Ingreso</button>
+              <button>Retirar dinero</button>
+        </div>
+            <br>
+            <br>
+            <table id="usersTable" border="1">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>TimeStamp</th>
+                    <th>amount</th>
+                    <th>balance</th>
+                    <th>description</th>
+                </tr>
+                
+            </thead>
+                 <tbody id="tbodyMovements"><!--Here is the generated content--></tbody>
+            </table>
+         
+            <script src="../js/generate_function.js"></script>
+            <script src="../js/clases.js"></script>
+    </body>
+</html>
+
