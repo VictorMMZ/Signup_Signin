@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../css/style.css">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+  }
+  </style>
+    </head>
+    
+        <body background="../images/fondo.jpg">
+<div class="content">
+    <header class="top-bar">
+        <div class="logo-area">
+            <a href="../index.html">
+                <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
+            </a>
+        </div>
+        
+        <nav class="nav-bar">
+            <a href="../index.html" class="nav-item active">🔒 Sign out</a>
+        </nav>
+    </header>
+
+    <div class="menu">
+        <button id="deposit">Deposit Money</button>
+        <button id="take">Take Money</button>
+       
+    </div>
+
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>TimeStamp</th>
+                <th>amount</th>
+                <th>balance</th>
+            </tr>
+        </thead>
+        <tbody id="tbodyMovements"></tbody>
+    </table>
+    
+    <div class="menu">
+        
+        <button id="deletemove" onclick="deleteLast(event)">Delete Last Movement</button>
+    </div>
+
+
+
+
+
+
+            <script src="../js/generate_function.js"></script>
+            <script src="../js/clases.js"></script>
+</div>
+    </body>
+</html>
+
+
