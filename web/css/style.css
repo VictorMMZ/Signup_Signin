@@ -4,14 +4,25 @@
  --color-text-light: #e5e7eb; /* Texto claro */
  --color-input-bg: #2a3749; /* Fondo de inputs */
 }
-/* Base */
-body {
+.bodysign {
  font-family: 'Poppins', sans-serif;
  background-color: var(--color-background);
  color: var(--color-text-light);
  display: flex;
  justify-content: center;
  align-items: center;
+}
+/* Base */
+.content {
+ font-family: 'Poppins', sans-serif;
+ background-color: var(--color-background);
+ color: var(--color-text-light);
+ display:block;
+ justify-content: center;
+ align-items: center;
+}
+.principal{
+    display: flex;
 }
 /* Contenedor principal con Flexbox para dos columnas */
 .main-layout {
@@ -231,13 +242,23 @@ input:focus {
 }
 
 #deposit {
-    background: #00ff00;
+    background: #8462ff;
 }
 #take{
-    background: #fd8803;
+    background: #8462ff;
 }
 #deletemove {
-    background: #e97777;
+    background: #fd8c8c;
+}
+
+#deposit:hover,#take:hover{
+    transform: scale(1.4);
+    transition: transform 2s ;
+}
+
+#deletemove:hover{
+    transform: scale(0.8);
+    transition: transform 1s ;
 }
 
 
@@ -257,10 +278,11 @@ input:focus {
     text-align: center;
     padding: 12px;
     color: black;
+    
 }
 
 #usersTable thead {
-    background: linear-gradient(90deg, #003b8b, #0074d9);
+    background: linear-gradient(90deg, #1f4be8, #6746f7);
     color: white;
 }
 
@@ -272,6 +294,23 @@ input:focus {
     background: #e0edff;
 }
 
+.infousu,.infobalance{
+    
+    color: white;
+    text-decoration: none;
+    padding: 3px 2px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size:1.2em; 
+    background-color: var(--color-accent-blue);
+    color: white;
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+    
+}
+#formDeposit,#formTake{
+display: none;
+}
 
 
 /* Media Query para móviles */

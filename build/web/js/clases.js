@@ -9,79 +9,79 @@
 //Vamos a crear las clases que utilizaremos para esta segunda practica CRUD
 
 class Account{
-    #id
-    #description
-    #balance
-    #creditLine
-    #beginBalance
-    #beginBalanceTimestamp
-    #type
+    _id
+    _description
+    _balance
+    _creditLine
+    _beginBalance
+    _beginBalanceTimestamp
+    _type
     
     
     constructor(id,description,balance,creditLine,beginBalance,beginBalanceTimestamp,type){
-        this.#id = id;
-        this.#description = description;
-        this.#balance = balance;
-        this.#creditLine = creditLine;
-        this.#beginBalance = beginBalance;
-        this.#beginBalanceTimestamp = beginBalanceTimestamp;
-        this.#type = type;
+        this._id = id;
+        this._description = description;
+        this._balance = balance;
+        this._creditLine = creditLine;
+        this._beginBalance = beginBalance;
+        this._beginBalanceTimestamp = beginBalanceTimestamp;
+        this._type = type;
     }
     
     getId() {
-        return this.#id ;
+        return this._id ;
     }
     
     getDescription() {
-        return this.#description;
+        return this._description;
     } 
     getBalance() {
-        return this.#balance ;
+        return this._balance ;
     }
     getCreditLine() { 
-        return this.#creditLine ;
+        return this._creditLine ;
     }
     getBeginBalance() {
-        return this.#beginBalance ;
+        return this._beginBalance ;
     } 
     getBeginBalanceTimestamp() {
-        return this.#beginBalanceTimestamp ;
+        return this._beginBalanceTimestamp ;
     }
-    getType() { return this.#type ;
+    getType() { return this._type ;
     }
     
 }
 
 class Movements{
     
-     #id;
-     #timestamp;
-     #amount;
-     #balance;
-     #description;
+     _id;
+     _timestamp;
+     _amount;
+     _balance;
+     _description;
      
     constructor(id, timestamp, amount, balance, description) {
-        this.#id = id; 
-        this.#timestamp = timestamp; 
-        this.#amount = amount;
-        this.#balance = balance; 
-        this.#description = description; }
+        this._id = id; 
+        this._timestamp = timestamp; 
+        this._amount = amount;
+        this._balance = balance; 
+        this._description = description; }
     
     // --- GETTERS ---
      get id() {
-         return this.#id; 
+         return this._id; 
      }
      get timestamp() {
-         return this.#timestamp; 
+         return this._timestamp; 
      }
      get amount() {
-         return this.#amount; 
+         return this._amount; 
      }
      get balance() {
-         return this.#balance;
+         return this._balance;
      }
      get description() {
-         return this.#description; 
+         return this._description; 
      }
     
     

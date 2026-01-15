@@ -13,6 +13,11 @@ const moveid="2654785441";
  */
 
 
+ const sesionusu = document.querySelector(".infousu");
+ 
+
+sesionusu.innerHTML = `<p> Usuario: ${sessionStorage.getItem("customer.firstName")} ${sessionStorage.getItem("customer.lastName")} </p>`;
+
 
 // funcion para generar tablas 
 function* movementsRowGenerator(movements) {
@@ -49,6 +54,9 @@ function* movementsRowGenerator(movements) {
                 "Accept": "application/xml"
               }
          });
+       
+         
+        buildMovementsTable(); 
       
     }
 
@@ -79,10 +87,16 @@ function* movementsRowGenerator(movements) {
 async function buildMovementsTable() {
     movements = await fetchMovements();
     tbody = document.getElementById("tbodyMovements"); 
+    tbody.innerHTML="";
     const rowGenerator = movementsRowGenerator(movements);
     for (const row of rowGenerator) {
     tbody.appendChild(row);
  }
+ 
+ const balanceusu = document.querySelector(".infobalance");
+ 
+
+balanceusu.innerHTML = `<p>Saldo: ${movements[movements.length-1].balance} €</p>`;
 }
 
 
@@ -93,8 +107,81 @@ async function buildMovementsTable() {
      const lastoperation=movements[movements.length-1].id;
      //llamamos tanto a la funcion fetch de eliminar como al constuir la tabla para que se haga dinamicamente(todavia queda corregir)
      fetchMovementsForRemove(lastoperation);
-          buildMovementsTable();
+          
  
 }
+   
+
+function confirmDelete(event){
+    if (confirm("¿Estás seguro de que deseas borrar este movimiento?")) {
+    // Usuario pulsó "Sí"
+    deleteLast();
+} else {
+    // Usuario pulsó "No"
+    console.log("Operación cancelada");
+}
+}
+
+async function fetchMovementtodeposit(){
+    const response = await fetch(SERVICE_URL +`${accountid}`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/xml"
+              }
+         });
+        const xmlText = await response.text();
+        return parseMovementsXML(xmlText);
+    }
+
+
+/*function createMovementXML() {
+    const data = {
+        firstName: nombreInput.value.trim()
+       
+    };
+    }*/
+
+
+   //Formularios de movimientos;
+   
+   //validar campo cantidad 
+   
+   const regexCantidad=/^\d+\.\d{2}$/;
+
+   function validarCantidad(valor){
+       return regexCantidad.test(valor); 
+   }
+   
+
+const btnMostrarDepo = document.getElementById("deposit");
+const formDepo = document.getElementById("formDeposit");
+const btnMostrarTake = document.getElementById("take");
+const formTake = document.getElementById("formTake");
+const errorTake= document.getElementById("error_password_2");
+btnMostrarDepo.addEventListener("click", () => {
+    // Mostrar 
+    formDepo.style.display = "block"; 
+     formTake.style.display = "none"; 
+    
+     });
+     
+     btnMostrarTake.addEventListener("click", () => {
+    // Mostrar 
+    formTake.style.display = "block"; 
+    formDepo.style.display = "none"; 
+
+     });
 // Call on page load
     buildMovementsTable();
+    
+    formTake.addEventListener("submit", (e) => {
+        
+    const valor = document.getElementById("totaltake").value;
+    
+    if (!validarCantidad(valor)) {
+        e.preventDefault();
+    errorTake.innerHTML="Error en la cantidad ,Deben ser digitos con dos decimales";
+    return;
+  }
+});
+
