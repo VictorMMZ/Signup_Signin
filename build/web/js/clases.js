@@ -50,6 +50,9 @@ class Account{
     getType() { return this._type ;
     }
     
+    
+    
+    
 }
 
 class Movements{
@@ -84,6 +87,17 @@ class Movements{
          return this._description; 
      }
     
+    toJSON(){
+        return{
+            id:this._id,
+            timestamp:this.timestamp,
+            amount:this.amount,
+            balance:this.balance,
+            description:this.description
+            
+        };
+        
+    }
     
 }
 

@@ -186,3 +186,14 @@ btnMostrarDepo.addEventListener("click", () => {
   }
 });
 
+
+/*
+ 
+ toJSON() {
+    return {
+      somethingCool: this.somethingCool, 
+    } 
+Necesario para mandar datos en formato json
+
+antes de de hacer Json.srtingfy(objeto);
+ */

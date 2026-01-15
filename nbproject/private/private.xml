@@ -4,8 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/victor/NetBeansProjects/Signup_Signin/web/html/movements.html</file>
-            <file>file:/home/victor/NetBeansProjects/Signup_Signin/web/js/generate_function.js</file>
             <file>file:/home/victor/NetBeansProjects/Signup_Signin/web/css/style.css</file>
+            <file>file:/home/victor/NetBeansProjects/Signup_Signin/web/js/generate_function.js</file>
+            <file>file:/home/victor/NetBeansProjects/Signup_Signin/web/js/clases.js</file>
+            <file>file:/home/victor/NetBeansProjects/Signup_Signin/web/js/signin.js</file>
         </group>
     </open-files>
 </project-private>
