@@ -114,10 +114,10 @@ balanceusu.innerHTML = `<p>Saldo: ${movements[movements.length-1].balance} €</
 
 function confirmDelete(event){
     if (confirm("¿Estás seguro de que deseas borrar este movimiento?")) {
-    // Usuario pulsó "Sí"
+        // Si se pulsa si
     deleteLast();
 } else {
-    // Usuario pulsó "No"
+    // Si se pulsa que no 
     console.log("Operación cancelada");
 }
 }
@@ -181,6 +181,7 @@ btnMostrarDepo.addEventListener("click", () => {
     if (!validarCantidad(valor)) {
         e.preventDefault();
     errorTake.innerHTML="Error en la cantidad ,Deben ser digitos con dos decimales";
+    errorTake.style.color="red";
     return;
   }
 });
