@@ -83,7 +83,17 @@ class Movements{
      get description() {
          return this._description; 
      }
-    
+     
+    toJSON() {
+    return {
+        id: this._id,
+        timestamp: this._timestamp,
+        amount:this._amount,
+        balance:this._balance,
+        description:this._description
+    };
+}
+
     
 }
 

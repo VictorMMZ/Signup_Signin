@@ -64,9 +64,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <label for="totaldepo">Cantidad (€):</label>
                 <input type="text" id="totaldepo" required>
                 <input type="hidden" id="deposit_1" name="deposit_1" value="Deposit">
-                <label for="password_1">Contraseña</label>
-                <input type="password" id="password_1" name="password_1">
-                <button type="submit" id="depositbutton">Confirm</button>
+                
+                <button type="submit" id="depositbutton" onclick="createDepositMovement(event)">Confirm</button>
                 <br>
                 <p id="error_password_1"></p>
                 <br>

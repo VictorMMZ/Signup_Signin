@@ -7,7 +7,7 @@
 const SERVICE_URL = "http://localhost:8080/CRUDBankServerSide/webresources/movement/";
 let movements;
 const accountid="account/2654785441";
-const moveid="2654785441";
+const idaccount="2654785441";
 /**
  * Generator function that yields table rows
  */
@@ -96,7 +96,7 @@ async function buildMovementsTable() {
  const balanceusu = document.querySelector(".infobalance");
  
 
-balanceusu.innerHTML = `<p>Saldo: ${movements[movements.length-1].balance} €</p>`;
+balanceusu.innerHTML = `<p id="saldo" >Saldo: ${movements[movements.length-1].balance} €</p>`;
 }
 
 
@@ -174,7 +174,7 @@ btnMostrarDepo.addEventListener("click", () => {
 // Call on page load
     buildMovementsTable();
     
-    formTake.addEventListener("submit", (e) => {
+    /*formTake.addEventListener("submit", (e) => {
         
     const valor = document.getElementById("totaltake").value;
     
@@ -184,5 +184,41 @@ btnMostrarDepo.addEventListener("click", () => {
     errorTake.style.color="red";
     return;
   }
-});
+});*/
 
+
+
+async function createDepositMovement(event){
+    event.preventDefault();
+    
+    try {
+     const timestamp= new Date().toISOString();
+     const amount = parseFloat(document.getElementById("totaldepo").value);
+     const oldbalance = 1000.00;
+     const balance=amount+oldbalance;
+     const description = "Deposit";
+     
+     if (isNaN(amount)) throw new Error("Amount must be a number");
+     
+     const depositData={timestamp,amount,balance,description};
+     
+     const response = await fetch(SERVICE_URL +`${idaccount}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                    
+                },
+                body: JSON.stringify(depositData)
+            });
+     
+    
+    if (!response.ok) throw new Error("Error in response");
+    
+    buildMovementsTable(); 
+    
+     } catch (error) {
+            alert("Error: " + error.message);
+        }
+     
+    
+}
