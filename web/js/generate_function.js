@@ -269,9 +269,9 @@ async function createTakeMovement(event) {
 }
 
 
-async function cargarCuenta(accountID) {
+async function cargarCuenta() {
     const response = await fetch(
-        `http://localhost:8080/CRUDBankServerSide/websources/account/${accountID}`,
+        `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
         {
             method: "GET",
             headers: { "Accept": "application/xml" }
@@ -301,7 +301,7 @@ async function cargarCuenta(accountID) {
 
 
 async function putAccount(){
-    const account = await cargarCuenta(idaccount);
+    const account = await cargarCuenta();
     
     const accountXML = `
 <account>
@@ -315,7 +315,7 @@ async function putAccount(){
 </account>
 `.trim();
 
-    fetch(`http://localhost:8080/CRUDBankServerSide/websources/account`,{
+    fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`,{
         
         method: "PUT",
         headers: {
