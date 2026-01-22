@@ -51,6 +51,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
             <thead>
               <tr>
                 <th>TimeStamp</th>
+                <th>Descrption</th>
                 <th>amount</th>
                 <th>balance</th>
               </tr>
@@ -76,12 +77,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <label for="totaltake">Cantidad (€):</label>
                 <input type="text" id="totaltake" name="totaltake" required>
                 <input type="hidden" id="take_1" name="take_1" value="Take">
-                <label for="password_2">Contraseña</label>
-                <input type="password" id="password_2" name="password_2">
-            <button type="submit" id="takebutton">Confirm</button>
-            <br>
-            <p id="error_password_2"></p>
-            <br>
+                <button type="submit" id="takebutton" onclick="createTakeMovement(event)">Confirm</button>
+            
         </form>
 
             <div class="menu">

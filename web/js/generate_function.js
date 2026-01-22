@@ -24,7 +24,7 @@ function* movementsRowGenerator(movements) {
     for (const movement of movements) {
            const tr = document.createElement("tr");
            //solo los campos que queremos ver
-           ["timestamp", "amount","balance"].forEach(field => {
+           ["timestamp","description","amount","balance"].forEach(field => {
                 const td = document.createElement("td");
                 td.textContent = movement[field];
                 tr.appendChild(td);
@@ -72,6 +72,7 @@ function* movementsRowGenerator(movements) {
                 movements.push({
                   
                     timestamp: movementNode.getElementsByTagName("timestamp")[0].textContent,
+                    description:movementNode.getElementsByTagName("description")[0].textContent,
                     amount: movementNode.getElementsByTagName("amount")[0].textContent,
                     balance: movementNode.getElementsByTagName("balance")[0].textContent,
                     id:movementNode.getElementsByTagName("id")[0].textContent
@@ -188,37 +189,142 @@ btnMostrarDepo.addEventListener("click", () => {
 
 
 
-async function createDepositMovement(event){
+async function createDepositMovement(event) {
     event.preventDefault();
-    
+
     try {
-     const timestamp= new Date().toISOString();
-     const amount = parseFloat(document.getElementById("totaldepo").value);
-     const oldbalance = 1000.00;
-     const balance=amount+oldbalance;
-     const description = "Deposit";
-     
-     if (isNaN(amount)) throw new Error("Amount must be a number");
-     
-     const depositData={timestamp,amount,balance,description};
-     
-     const response = await fetch(SERVICE_URL +`${idaccount}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                    
-                },
-                body: JSON.stringify(depositData)
-            });
-     
+        const timestamp = new Date().toISOString();
+        const amount = parseFloat(document.getElementById("totaldepo").value);
+        const oldbalance = parseFloat(movements[movements.length-1].balance);
+        const balance = amount + oldbalance;
+        const description = "Deposit";
+
+        if (isNaN(amount)) throw new Error("Amount must be a number");
+
+        // Construimos el XML
+        const xmlBody =
+            `<movement>
+                <timestamp>${timestamp}</timestamp>
+                <amount>${amount}</amount>
+                <balance>${balance}</balance>
+                <description>${description}</description>
+            </movement>`;
+
+        const response = await fetch(SERVICE_URL + `${idaccount}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/xml"
+            },
+            body: xmlBody
+        });
+
+        if (!response.ok) throw new Error("Error in response");
+
+        buildMovementsTable();
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
     
-    if (!response.ok) throw new Error("Error in response");
-    
-    buildMovementsTable(); 
-    
-     } catch (error) {
-            alert("Error: " + error.message);
-        }
-     
-    
+    putAccount();
 }
+
+async function createTakeMovement(event) {
+    event.preventDefault();
+
+    try {
+        const timestamp = new Date().toISOString();
+        const amount = parseFloat(document.getElementById("totaltake").value);
+        const oldbalance = parseFloat(movements[movements.length-1].balance);
+        const balance = oldbalance - amount;
+        const description = "Take";
+        if (isNaN(amount)) throw new Error("Amount must be a number");
+
+        // Construimos el XML
+        const xmlBody =
+            `<movement>
+                <timestamp>${timestamp}</timestamp>
+                <amount>${amount}</amount>
+                <balance>${balance}</balance>
+                <description>${description}</description>
+            </movement>`;
+
+        const response = await fetch(SERVICE_URL + `${idaccount}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/xml"
+            },
+            body: xmlBody
+        });
+
+        if (!response.ok) throw new Error("Error in response");
+
+        buildMovementsTable();
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+    
+    putAccount();
+}
+
+
+async function cargarCuenta(accountID) {
+    const response = await fetch(
+        `http://localhost:8080/CRUDBankServerSide/websources/account/${accountID}`,
+        {
+            method: "GET",
+            headers: { "Accept": "application/xml" }
+        }
+    );
+
+    const xmlText = await response.text();
+ 
+    
+
+    // Convertir XML → objeto Account
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "application/xml");
+
+    const account = new Account(
+        xml.getElementsByTagName("id")[0].textContent,
+        xml.getElementsByTagName("description")[0].textContent,
+        xml.getElementsByTagName("balance")[0].textContent,
+        xml.getElementsByTagName("creditLine")[0].textContent,
+        xml.getElementsByTagName("beginBalance")[0].textContent,
+        xml.getElementsByTagName("beginBalanceTimestamp")[0].textContent,
+        xml.getElementsByTagName("type")[0].textContent
+    );
+
+    return account;
+}
+
+
+async function putAccount(){
+    const account = await cargarCuenta(idaccount);
+    
+    const accountXML = `
+<account>
+    <id>${account.getId()}</id>
+    <description>${account.getDescription()}</description>
+    <balance>${parseFloat(movements[movements.length-1].balance)}</balance>
+    <creditLine>${account.getCreditLine()}</creditLine>
+    <beginBalance>${account.getBeginBalance()}</beginBalance>
+    <beginBalanceTimestamp>${account.getBeginBalanceTimestamp()}</beginBalanceTimestamp>
+    <type>${account.getType()}</type>
+</account>
+`.trim();
+
+    fetch(`http://localhost:8080/CRUDBankServerSide/websources/account`,{
+        
+        method: "PUT",
+        headers: {
+            "Content-type":"application/xml",
+            "Accept":"application/xml"
+            
+        },
+        body: accountXML
+    });
+}
+
+   
