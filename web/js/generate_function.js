@@ -16,7 +16,7 @@ const idaccount="2654785441";
  const sesionusu = document.querySelector(".infousu");
  
 
-sesionusu.innerHTML = `<p> Usuario: ${sessionStorage.getItem("customer.firstName")} ${sessionStorage.getItem("customer.lastName")} </p>`;
+sesionusu.innerHTML = `<p> ${sessionStorage.getItem("customer.firstName")} ${sessionStorage.getItem("customer.lastName")} </p>`;
 
 
 // funcion para generar tablas 
@@ -69,12 +69,37 @@ function* movementsRowGenerator(movements) {
         const movements = [];
         const movementsNodes = xmlDoc.getElementsByTagName("movement");
             for (const movementNode of movementsNodes) {
+                
+                const date=movementNode.getElementsByTagName("timestamp")[0].textContent;
+                const noFormDate= new Date(date);
+                const formatedDate = noFormDate.toLocaleString("es-ES", { 
+                    year: "numeric",
+                    month: "2-digit", 
+                    day: "2-digit", 
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit" });
+                
+                const formateadorEU = new Intl.NumberFormat('es-ES', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 2 // Asegura dos decimales
+                    });
+                const amount=movementNode.getElementsByTagName("amount")[0].textContent;
+                
+                const formateamount= formateadorEU.format(amount);
+                
+                const balance=movementNode.getElementsByTagName("balance")[0].textContent;
+                const formatedbalance= formateadorEU.format(balance);
+                
                 movements.push({
+                    
+                    
                   
-                    timestamp: movementNode.getElementsByTagName("timestamp")[0].textContent,
+                    timestamp: formatedDate,
                     description:movementNode.getElementsByTagName("description")[0].textContent,
-                    amount: movementNode.getElementsByTagName("amount")[0].textContent,
-                    balance: movementNode.getElementsByTagName("balance")[0].textContent,
+                    amount: formateamount,
+                    balance: formatedbalance,
                     id:movementNode.getElementsByTagName("id")[0].textContent
                     
                     
@@ -97,7 +122,7 @@ async function buildMovementsTable() {
  const balanceusu = document.querySelector(".infobalance");
  
 
-balanceusu.innerHTML = `<p id="saldo" >Saldo: ${movements[movements.length-1].balance} €</p>`;
+balanceusu.innerHTML = `<p id="saldo" >Balance:     ${movements[movements.length-1].balance}</p>`;
 }
 
 
@@ -174,19 +199,6 @@ btnMostrarDepo.addEventListener("click", () => {
      });
 // Call on page load
     buildMovementsTable();
-    
-    /*formTake.addEventListener("submit", (e) => {
-        
-    const valor = document.getElementById("totaltake").value;
-    
-    if (!validarCantidad(valor)) {
-        e.preventDefault();
-    errorTake.innerHTML="Error en la cantidad ,Deben ser digitos con dos decimales";
-    errorTake.style.color="red";
-    return;
-  }
-});*/
-
 
 
 async function createDepositMovement(event) {
@@ -228,6 +240,8 @@ async function createDepositMovement(event) {
     }
     
     putAccount();
+    formDepo.style.display = "none"; 
+    
 }
 
 async function createTakeMovement(event) {
@@ -272,6 +286,7 @@ async function createTakeMovement(event) {
     }
     
     putAccount();
+    formTake.style.display = "none"; 
 }
 
 

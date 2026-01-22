@@ -15,14 +15,33 @@
 /* Base */
 .content {
  font-family: 'Poppins', sans-serif;
- background-color: var(--color-background);
+ background: linear-gradient(90deg, #0a1a4f, #3b0a63);
  color: var(--color-text-light);
  display:block;
  justify-content: center;
  align-items: center;
+ height: 100%; min-height: 100vh;
+
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* evita barras blancas */
+}
+
+body {
+  transform: scale(0.7);
+  transform-origin: top left; /* evita que se desplace raro */
+  width: calc(100% / 0.7);  /* compensa el escalado */
+  height: calc(100% / 0.7);
+}
+
 .principal{
     display: flex;
+    background-color: #c9cbff;
 }
 /* Contenedor principal con Flexbox para dos columnas */
 .main-layout {
@@ -86,11 +105,7 @@
  background-color: var(--color-background);
  padding: 40px;
 }
-h2 {
- text-align: center;
- margin-bottom: 25px;
- font-weight: 600;
-}
+
 /* Diseño de dos columnas para cale, ciudad, pais y cp */
 .address-group {
  display: flex;
@@ -222,18 +237,33 @@ input:focus {
     font-weight: bold;
 }
 
+header{
+  
+    height:100px;
+    background: #111827;
+    color: #e5e7eb;
+}
+
 /* --- MENU BUTTONS --- */
 .menu {
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     gap: 20px;
     margin-top: 20px;
+     box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
 }
 
-.menu button {
-    padding: 12px 20px;
-    font-size: 16px;
+button{
+    margin-left: 20px;
+    background: linear-gradient(90deg, #1f4be8, #6746f7);
+    font-size:20px;
+   padding: 12px 10px; /* alto - ancho */
     
+}
+
+.menu button,button {
+    padding: 12px 10px;
     color: white;
     border: none;
     border-radius: 6px;
@@ -248,18 +278,9 @@ input:focus {
     background: #8462ff;
 }
 #deletemove {
-    background: #fd8c8c;
+    background:#570983
 }
 
-#deposit:hover,#take:hover{
-    transform: scale(1.4);
-    transition: transform 2s ;
-}
-
-#deletemove:hover{
-    transform: scale(0.8);
-    transition: transform 1s ;
-}
 
 
 /* --- TABLE --- */
@@ -293,32 +314,126 @@ input:focus {
 #usersTable tbody tr:hover {
     background: #e0edff;
 }
-
-.infousu,.infobalance{
+.nav_menu{
+    margin-right:auto;
     
+    
+}
+
+
+.info{
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+    margin-top:30px;
+    margin-right:40px;
+    
+    
+}
+
+
+.infousu{
+    
+    width: 200px;
     color: white;
-    text-decoration: none;
-    padding: 3px 2px;
+    text-align: center;
+    margin-right: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
-    font-size:1.2em; 
-    background-color: var(--color-accent-blue);
+    font-size:0.8em; 
     color: white;
     box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
     
 }
+
+.infobalance{
+    margin-left:auto;
+    width: 200px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    margin-right:10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size:0.8em; 
+    background-color: #005968;
+    color: white;
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+    
+}
+
+#movementsTitle{
+    width: 200px;
+    padding: 10px;
+    margin-bottom: 10px;
+    height: 60px;
+    margin:auto;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size:1.6em; 
+    background-color: var(--color-accent-blue);
+    color: white;
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+    text-align: center;
+    
+    
+    
+    
+}
+
+
+
 #formDeposit,#formTake{
 display: none;
 }
 
-.title{
-    display:flex;
-    justify-content: center;
-    align-items: center;
-     color: white;
 
+
+.footer {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 30px 20px;
+    margin-top:300px;
+    font-family: Arial, sans-serif;
+    
 }
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section h3 {
+    margin-bottom: 10px;
+    color: #93c5fd;
+}
+
+.footer-section a {
+    display: block;
+    color: #e5e7eb;
+    text-decoration: none;
+    margin: 4px 0;
+    transition: color 0.3s;
+}
+
+.footer-section a:hover {
+    color: #60a5fa;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #374151;
+    font-size: 14px;
+}
+
 
 
 

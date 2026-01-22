@@ -13,14 +13,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('../images/fondo.jpg') no-repeat center center fixed;
-    background-size: cover;
+   
+
+
     color: #fff;
   }
   </style>
     </head>
     
-<body background="../images/fondo.jpg">
+<body>
      <div class="content">
             <header class="top-bar">
                 <div class="logo-area">
@@ -28,21 +29,30 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                         <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
                     </a>
                 </div>
-                
-                <div class="infousu"></div>
-                
-                <div class="infobalance"></div>   
-                
+                  <div class="nav_menu">
+                    <button>Finances</button>
+                    <button>Loans</button>
+                    <button>Customer Area</button>
+                    </div>
+                 
+                <div class="info">
+          <div class="infousu"></div>
+
+          <div class="infobalance"></div>  
+         </div>
+         
                 <nav class="nav-bar">
-                    <a href="../index.html" class="nav-item active">🔒 Sign out</a>
+            
+         
+                    
+                    <a href="../index.html" class="nav-item-moves">🔒 Sign out</a>
                 </nav>
             </header>
-         
-         <div class="title">
-           <h2>MOVEMENTS</h2>
-         </div>
-
+        
+        
         <div class="menu">
+            
+             
            
            <button id="deposit">Deposit Money</button>
 
@@ -50,8 +60,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
       
         </div>
          
-        <div class="principal">  
+        <div class="principal"> 
           <table id="usersTable">
+              <h1 id="movementsTitle">Transactions History</h1>
             <thead>
               <tr>
                 <th>TimeStamp</th>
@@ -88,6 +99,39 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
             <div class="menu">
                 <button id="deletemove" onclick="confirmDelete(event)">Delete Last Movement</button>
         </div>
+         
+         <footer class="footer">
+    <div class="footer-content">
+
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p>Email: contacto@quantummbank.com</p>
+            <p>Tel: +34 921 345 887</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>Links</h3>
+            <a href="#">Login</a>
+            <a href="#">About us</a>
+            <a href="#">Services</a>
+        </div>
+
+        <div class="footer-section">
+            <h3>Follow us</h3>
+            <div class="socials">
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 all rights reserved
+    </div>
+</footer>
+
              
             
             <script src="../js/generate_function.js"></script>

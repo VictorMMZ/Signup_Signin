@@ -47,7 +47,8 @@ class Account{
     getBeginBalanceTimestamp() {
         return this._beginBalanceTimestamp ;
     }
-    getType() { return this._type ;
+    getType() { 
+        return this._type ;
     }
     
 }
