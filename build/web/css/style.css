@@ -312,6 +312,15 @@ input:focus {
 display: none;
 }
 
+.title{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+     color: white;
+
+}
+
+
 
 /* Media Query para móviles */
 @media (max-width: 768px) {

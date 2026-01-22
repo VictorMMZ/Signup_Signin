@@ -200,6 +200,7 @@ async function createDepositMovement(event) {
         const description = "Deposit";
 
         if (isNaN(amount)) throw new Error("Amount must be a number");
+         if (amount<=0) throw new Error("Amount must be a possitive number");
 
         // Construimos el XML
         const xmlBody =
@@ -233,12 +234,17 @@ async function createTakeMovement(event) {
     event.preventDefault();
 
     try {
+        
+        
         const timestamp = new Date().toISOString();
         const amount = parseFloat(document.getElementById("totaltake").value);
         const oldbalance = parseFloat(movements[movements.length-1].balance);
         const balance = oldbalance - amount;
         const description = "Take";
         if (isNaN(amount)) throw new Error("Amount must be a number");
+        if (amount<=0) throw new Error("Amount must be a possitive number");
+        if (oldbalance<amount) throw new Error ("the amount exceeds the balance");
+        
 
         // Construimos el XML
         const xmlBody =
