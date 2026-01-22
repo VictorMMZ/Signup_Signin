@@ -32,7 +32,7 @@ html, body {
   overflow: hidden; /* evita barras blancas */
 }
 
-body {
+.moves{
   transform: scale(0.7);
   transform-origin: top left; /* evita que se desplace raro */
   width: calc(100% / 0.7);  /* compensa el escalado */
