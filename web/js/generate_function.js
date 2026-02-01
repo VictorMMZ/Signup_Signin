@@ -6,32 +6,51 @@
 
 const SERVICE_URL = "http://localhost:8080/CRUDBankServerSide/webresources/movement/";
 let movements;
-const accountid="account/2654785441";
-const idaccount="2654785441";
+const accountid="account/3252214522";
+const idaccount="3252214522";
+
 /**
  * Generator function that yields table rows
  */
 
 
- const sesionusu = document.querySelector(".infousu");
- 
-
+const sesionusu = document.querySelector(".infousu");
 sesionusu.innerHTML = `<p> ${sessionStorage.getItem("customer.firstName")} ${sessionStorage.getItem("customer.lastName")} </p>`;
+
+const infoidaccount=document.querySelector(".idaccount");
+infoidaccount.innerHTML = `<p> Account ID:  ${idaccount} </p>`;
+
+const infoaccounttype= document.querySelector(".accounttype");
+
+const formateadorEU = new Intl.NumberFormat('es-ES', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 2 // Asegura dos decimales
+                    });
 
 
 // funcion para generar tablas 
 function* movementsRowGenerator(movements) {
     for (const movement of movements) {
-           const tr = document.createElement("tr");
-           //solo los campos que queremos ver
-           ["timestamp","description","amount","balance"].forEach(field => {
-                const td = document.createElement("td");
-                td.textContent = movement[field];
-                tr.appendChild(td);
+        const tr = document.createElement("tr");
+
+        ["timestamp", "description", "amount", "balance"].forEach(field => {
+            const td = document.createElement("td");
+
+            if (field === "amount" || field === "balance") {
+    td.textContent = formateadorEU.format(movement[field]);
+} else {
+    td.textContent = movement[field];
+}
+
+
+            tr.appendChild(td);
         });
-     yield tr;
- }
- }
+
+        yield tr;
+    }
+}
+
  
  // funcion fetch para recuperar datos del servidor parseando a XML
     async function fetchMovements() {
@@ -57,8 +76,38 @@ function* movementsRowGenerator(movements) {
        
          
         buildMovementsTable(); 
+         
+       
+        
       
     }
+    
+    //funcion accionadora del boton para eliminar el ultimo movimiento
+ function deleteLast(event){   
+     
+     // creamos la variable en la que guardaremos el id del ultimo movimiento ya que cada movimiento tiene un numero de id mayor al anterior
+     const lastoperation=movements[movements.length-1].id;
+     //llamamos tanto a la funcion fetch de eliminar como al constuir la tabla para que se haga dinamicamente(todavia queda corregir)
+     fetchMovementsForRemove(lastoperation);
+     
+          
+ 
+}
+   
+
+function confirmDelete(event){
+    if (confirm("¿Estás seguro de que deseas borrar este movimiento?")) {
+        // Si se pulsa si
+       
+    deleteLast();
+    putAccount();
+       
+       
+} else {
+    // Si se pulsa que no 
+    console.log("Operación cancelada");
+}
+}
 
 
 
@@ -80,17 +129,18 @@ function* movementsRowGenerator(movements) {
                     minute: "2-digit",
                     second: "2-digit" });
                 
-                const formateadorEU = new Intl.NumberFormat('es-ES', {
+                /*const formateadorEU = new Intl.NumberFormat('es-ES', {
                     style: 'currency',
                     currency: 'EUR',
                     minimumFractionDigits: 2 // Asegura dos decimales
                     });
+            */
                 const amount=movementNode.getElementsByTagName("amount")[0].textContent;
                 
-                const formateamount= formateadorEU.format(amount);
+               // const formateamount= formateadorEU.format(amount);
                 
                 const balance=movementNode.getElementsByTagName("balance")[0].textContent;
-                const formatedbalance= formateadorEU.format(balance);
+                // const formatedbalance= formateadorEU.format(balance);
                 
                 movements.push({
                     
@@ -98,8 +148,8 @@ function* movementsRowGenerator(movements) {
                   
                     timestamp: formatedDate,
                     description:movementNode.getElementsByTagName("description")[0].textContent,
-                    amount: formateamount,
-                    balance: formatedbalance,
+                    amount: Number(movementNode.getElementsByTagName("amount")[0].textContent),
+                    balance: Number(movementNode.getElementsByTagName("balance")[0].textContent),
                     id:movementNode.getElementsByTagName("id")[0].textContent
                     
                     
@@ -107,7 +157,45 @@ function* movementsRowGenerator(movements) {
              }
         return movements;
      }
-     
+     async function cargarCuenta() {
+    const response = await fetch(
+        `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
+        {
+            method: "GET",
+            headers: { "Accept": "application/xml" }
+        }
+    );
+
+    const xmlText = await response.text();
+ 
+    
+
+    // Convertir XML → objeto Account
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "application/xml");
+
+    account = new Account(
+        xml.getElementsByTagName("id")[0].textContent,
+        xml.getElementsByTagName("description")[0].textContent,
+        xml.getElementsByTagName("balance")[0].textContent,
+        xml.getElementsByTagName("creditLine")[0].textContent,
+        xml.getElementsByTagName("beginBalance")[0].textContent,
+        xml.getElementsByTagName("beginBalanceTimestamp")[0].textContent,
+        xml.getElementsByTagName("type")[0].textContent
+    );
+    
+    
+   
+   infoaccounttype.innerHTML=`<p> Type ${account._type}</p>`;
+
+    return account;
+
+
+}
+
+
+cargarCuenta();
+ 
      
 //Funcion utilizada para llamar a las demas funciones
 async function buildMovementsTable() {
@@ -122,62 +210,8 @@ async function buildMovementsTable() {
  const balanceusu = document.querySelector(".infobalance");
  
 
-balanceusu.innerHTML = `<p id="saldo" >Balance:     ${movements[movements.length-1].balance}</p>`;
+balanceusu.innerHTML = `<p id="saldo" >Balance:     ${movements[movements.length-1].balance} €</p>`;
 }
-
-
-//funcion accionadora del boton para eliminar el ultimo movimiento
- function deleteLast(event){   
-     
-     // creamos la variable en la que guardaremos el id del ultimo movimiento ya que estan ordenados
-     const lastoperation=movements[movements.length-1].id;
-     //llamamos tanto a la funcion fetch de eliminar como al constuir la tabla para que se haga dinamicamente(todavia queda corregir)
-     fetchMovementsForRemove(lastoperation);
-          
- 
-}
-   
-
-function confirmDelete(event){
-    if (confirm("¿Estás seguro de que deseas borrar este movimiento?")) {
-        // Si se pulsa si
-    deleteLast();
-} else {
-    // Si se pulsa que no 
-    console.log("Operación cancelada");
-}
-}
-
-async function fetchMovementtodeposit(){
-    const response = await fetch(SERVICE_URL +`${accountid}`, {
-            method: "POST",
-            headers: {
-                "Accept": "application/xml"
-              }
-         });
-        const xmlText = await response.text();
-        return parseMovementsXML(xmlText);
-    }
-
-
-/*function createMovementXML() {
-    const data = {
-        firstName: nombreInput.value.trim()
-       
-    };
-    }*/
-
-
-   //Formularios de movimientos;
-   
-   //validar campo cantidad 
-   
-   const regexCantidad=/^\d+\.\d{2}$/;
-
-   function validarCantidad(valor){
-       return regexCantidad.test(valor); 
-   }
-   
 
 const btnMostrarDepo = document.getElementById("deposit");
 const formDepo = document.getElementById("formDeposit");
@@ -230,25 +264,27 @@ async function createDepositMovement(event) {
             },
             body: xmlBody
         });
-
+        formDepo.style.display = "none"; 
         if (!response.ok) throw new Error("Error in response");
 
         buildMovementsTable();
 
     } catch (error) {
         alert("Error: " + error.message);
+         formDepo.style.display = "block"; 
     }
     
-    putAccount();
-    formDepo.style.display = "none"; 
+    
+     
     
 }
 
 async function createTakeMovement(event) {
     event.preventDefault();
+    const accounttake= await cargarCuenta();
 
     try {
-        
+        if(accounttake._type==="STANDARD"){
         
         const timestamp = new Date().toISOString();
         const amount = parseFloat(document.getElementById("totaltake").value);
@@ -257,10 +293,43 @@ async function createTakeMovement(event) {
         const description = "Take";
         if (isNaN(amount)) throw new Error("Amount must be a number");
         if (amount<=0) throw new Error("Amount must be a possitive number");
-        if (oldbalance<amount) throw new Error ("the amount exceeds the balance");
-        
-
+       if (oldbalance<amount) throw new Error ("the amount exceeds the balance");
         // Construimos el XML
+        const xmlBody =
+            `<movement>
+                <timestamp>${timestamp}</timestamp>
+                <amount>${amount}</amount>
+                <balance>${balance}</balance>
+                <description>${description}</description>
+            </movement>`;
+         
+        const response = await fetch(SERVICE_URL + `${idaccount}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/xml"
+            },
+            body: xmlBody
+        });
+         formTake.style.display = "none"; 
+
+        if (!response.ok) throw new Error("Error in response");
+
+        buildMovementsTable();
+
+    }if(accounttake._type==="CREDIT"){
+        const timestamp = new Date().toISOString();
+        const amount = parseFloat(document.getElementById("totaltake").value);
+        const oldbalance = parseFloat(movements[movements.length-1].balance);
+        let balance = oldbalance - amount;
+        const description = "Take";
+        
+        const creditxbalance=oldbalance+parseFloat(accounttake._creditLine);
+        if (isNaN(amount)) throw new Error("Amount must be a number");
+        if (amount<=0) throw new Error("Amount must be a possitive number");
+        if (creditxbalance<amount) throw new Error ("the amount exceeds the balance and credit");
+        if (oldbalance<amount && creditxbalance>amount){
+            balance=0;
+        }
         const xmlBody =
             `<movement>
                 <timestamp>${timestamp}</timestamp>
@@ -276,21 +345,30 @@ async function createTakeMovement(event) {
             },
             body: xmlBody
         });
+         formTake.style.display = "none"; 
 
         if (!response.ok) throw new Error("Error in response");
 
         buildMovementsTable();
 
-    } catch (error) {
-        alert("Error: " + error.message);
+        
+        
     }
     
-    putAccount();
-    formTake.style.display = "none"; 
+    }
+        
+            
+        catch (error) {
+        alert("Error: " + error.message);
+        formTake.style.display = "block"; 
+    }
+
 }
 
 
-async function cargarCuenta() {
+
+async function putAccount() {
+    // 1. Pides la cuenta al servidor en XML
     const response = await fetch(
         `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
         {
@@ -299,53 +377,29 @@ async function cargarCuenta() {
         }
     );
 
-    const xmlText = await response.text();
- 
-    
+    let xmlText = await response.text();
 
-    // Convertir XML → objeto Account
+    // 2. Parseas el XML
     const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlText, "application/xml");
+    const xmlDoc = parser.parseFromString(xmlText, "application/xml");
 
-    const account = new Account(
-        xml.getElementsByTagName("id")[0].textContent,
-        xml.getElementsByTagName("description")[0].textContent,
-        xml.getElementsByTagName("balance")[0].textContent,
-        xml.getElementsByTagName("creditLine")[0].textContent,
-        xml.getElementsByTagName("beginBalance")[0].textContent,
-        xml.getElementsByTagName("beginBalanceTimestamp")[0].textContent,
-        xml.getElementsByTagName("type")[0].textContent
-    );
+    // 3. Actualizas solo el <balance> con el último movimiento
+    const newBalance = Number(movements[movements.length - 1].balance);
+    xmlDoc.getElementsByTagName("balance")[0].textContent = newBalance;
 
-    return account;
-}
+    // 4. Serializas de nuevo el XML completo
+    const serializer = new XMLSerializer();
+    const updatedXML = serializer.serializeToString(xmlDoc);
 
-
-async function putAccount(){
-    const account = await cargarCuenta();
-    
-    const accountXML = `
-<account>
-    <id>${account.getId()}</id>
-    <description>${account.getDescription()}</description>
-    <balance>${parseFloat(movements[movements.length-1].balance)}</balance>
-    <creditLine>${account.getCreditLine()}</creditLine>
-    <beginBalance>${account.getBeginBalance()}</beginBalance>
-    <beginBalanceTimestamp>${account.getBeginBalanceTimestamp()}</beginBalanceTimestamp>
-    <type>${account.getType()}</type>
-</account>
-`.trim();
-
-    fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`,{
-        
+    // 5. Haces el PUT con TODO el XML de <account>
+    await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
         method: "PUT",
         headers: {
-            "Content-type":"application/xml",
-            "Accept":"application/xml"
-            
+            "Content-Type": "application/xml",
+            "Accept": "application/xml"
         },
-        body: accountXML
+        body: updatedXML
     });
 }
 
-   
+

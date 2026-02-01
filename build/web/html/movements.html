@@ -34,8 +34,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                     </div>
                  
                 <div class="info">
+          <div class="accounttype"></div>
           <div class="infousu"></div>
-
+          <div class="idaccount"></div>
           <div class="infobalance"></div>  
          </div>
          
@@ -59,14 +60,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         </div>
          
         <div class="principal"> 
-          <table id="usersTable">
+          <table id="movementTable">
               <h1 id="movementsTitle">Transactions History</h1>
             <thead>
               <tr>
                 <th>TimeStamp</th>
-                <th>Descrption</th>
-                <th>amount</th>
-                <th>balance</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Balance</th>
               </tr>
             </thead>
             <tbody id="tbodyMovements"></tbody>
@@ -80,9 +81,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <input type="hidden" id="deposit_1" name="deposit_1" value="Deposit">
                 
                 <button type="submit" id="depositbutton" onclick="createDepositMovement(event)">Confirm</button>
-                <br>
-                <p id="error_password_1"></p>
-                <br>
                 
         </form>
          <form id="formTake">
