@@ -282,6 +282,21 @@ button{
      
 }
 
+.credito {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background: linear-gradient(90deg, #4a6cf7, #8a4ff7);
+    color: white;
+    display: inline-block;
+    box-shadow: 0 4px 10px rgba(80, 60, 200, 0.3);
+    height: 50px;
+}
+
+
 
 
 /* --- TABLE --- */

@@ -95,12 +95,12 @@ function* movementsRowGenerator(movements) {
 }
    
 
-function confirmDelete(event){
+async function confirmDelete(event){
     if (confirm("¿Estás seguro de que deseas borrar este movimiento?")) {
         // Si se pulsa si
        
-    deleteLast();
-    putAccount();
+   await deleteLast();
+   await putAccount();
        
        
 } else {
@@ -175,12 +175,12 @@ function confirmDelete(event){
     const xml = parser.parseFromString(xmlText, "application/xml");
 
     account = new Account(
-        xml.getElementsByTagName("id")[0].textContent,
-        xml.getElementsByTagName("description")[0].textContent,
         xml.getElementsByTagName("balance")[0].textContent,
-        xml.getElementsByTagName("creditLine")[0].textContent,
         xml.getElementsByTagName("beginBalance")[0].textContent,
         xml.getElementsByTagName("beginBalanceTimestamp")[0].textContent,
+        xml.getElementsByTagName("creditLine")[0].textContent,
+        xml.getElementsByTagName("description")[0].textContent,
+        xml.getElementsByTagName("id")[0].textContent,
         xml.getElementsByTagName("type")[0].textContent
     );
     
@@ -327,9 +327,7 @@ async function createTakeMovement(event) {
         if (isNaN(amount)) throw new Error("Amount must be a number");
         if (amount<=0) throw new Error("Amount must be a possitive number");
         if (creditxbalance<amount) throw new Error ("the amount exceeds the balance and credit");
-        if (oldbalance<amount && creditxbalance>amount){
-            balance=0;
-        }
+       
         const xmlBody =
             `<movement>
                 <timestamp>${timestamp}</timestamp>
@@ -365,10 +363,23 @@ async function createTakeMovement(event) {
 
 }
 
+async function showCredit(){
+   
+    const accountcredit= await cargarCuenta();
+    const showcredit=document.querySelector(".credito");
+    if(accountcredit._type==="CREDIT"){
+        showcredit.textContent="Credit Line " +formateadorEU.format(accountcredit._creditLine);
+    }
+  
+}
+
+showCredit();
+
+
 
 
 async function putAccount() {
-    // 1. Pides la cuenta al servidor en XML
+    // 1. Pedimos la cuenta al servidor en XML
     const response = await fetch(
         `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
         {
@@ -376,18 +387,18 @@ async function putAccount() {
             headers: { "Accept": "application/xml" }
         }
     );
-
+     //aqui devuleve la respuesta del get en formato texto
     let xmlText = await response.text();
 
-    // 2. Parseas el XML
+    // 2. ParseaR el XML
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, "application/xml");
 
-    // 3. Actualizas solo el <balance> con el último movimiento
+    // 3. Actualizar con el balance del  último movimiento (esto deberia de dart el ultimo movimiento despues de borrarlo)
     const newBalance = Number(movements[movements.length - 1].balance);
     xmlDoc.getElementsByTagName("balance")[0].textContent = newBalance;
 
-    // 4. Serializas de nuevo el XML completo
+    // 4. Serializas de nuevo el XML completo pasar de txt a xml para mandarlo en el put
     const serializer = new XMLSerializer();
     const updatedXML = serializer.serializeToString(xmlDoc);
 
