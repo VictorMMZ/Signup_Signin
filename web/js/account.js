@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!custIdRaw) return alert("Sesión expirada");
 
             // Limpieza del ID igual que tu compañero
-            const idLimpio = parseInt(custIdRaw.replace(/[,.]/g, ""));
+            const idLimpio = custIdRaw.replace(/[,.]/g, "").trim();
             const typeSelect = document.getElementById("accTypeSelect");
             const creditInput = document.getElementById("accCredit");
 
@@ -63,42 +63,51 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * READ: Obtener cuentas del cliente
  */
+/**
+ * READ: Obtener cuentas del cliente y convertirlas a objetos de Clase
+ */
 async function pageLoadHandler() {
     try {
         const rawId = sessionStorage.getItem("customer.id");
         if (!rawId) return;
         
-        // Limpiamos el ID de puntos y comas
         const customerId = rawId.replace(/[,.]/g, "");
-        
-        // Anti-Cache: Añadimos el tiempo actual (?t=)
-        const response = await fetch(`${SERVICE_URL}${customerId}?t=${new Date().getTime()}`, {
-            method: "GET",
-            headers: { "Accept": "application/json" }
-        });
+        const response = await fetch(`${SERVICE_URL}${customerId}?t=${new Date().getTime()}`);
 
-        if (!response.ok) return;
+        if (response.ok) {
+            const rawData = await response.json(); 
+            
+            // CONVERSIÓN: Creamos objetos de la clase Account para que tengan los guiones bajos
+            const accounts = rawData.map(acc => new Account(
+                acc.id, 
+                acc.description, 
+                acc.balance, 
+                acc.creditLine, 
+                acc.beginBalance, 
+                acc.beginBalanceTimestamp, 
+                acc.creditLine > 0 ? "CREDIT" : "STANDARD"
+            ));
 
-        const accounts = await response.json();
-        
-        // Actualizamos el balance global
-        calculateGlobalBalance(accounts); 
+            console.log("Cuentas cargadas con guiones bajos:", accounts);
 
-        const tbody = document.getElementById("tableBody");
-        if (tbody) {
-            tbody.innerHTML = ""; // Limpieza de tabla
-            const rowGenerator = userRowGenerator(accounts);
-            for (const row of rowGenerator) {
-                tbody.appendChild(row);
+            calculateGlobalBalance(accounts); 
+
+            const tbody = document.getElementById("tableBody");
+            if (tbody) {
+                tbody.innerHTML = "";
+                const rowGenerator = userRowGenerator(accounts);
+                for (const row of rowGenerator) {
+                    tbody.appendChild(row);
+                }
             }
         }
     } catch (e) {
-        console.error("Loading error:", e);
+        console.error("Error cargando datos:", e);
     }
 }
 
 /**
- * GENERADOR DE FILAS (yield)
+ * GENERADOR DE FILAS (Adaptado a guiones bajos)
  */
 function* userRowGenerator(accounts) {
     const currency = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
@@ -106,19 +115,20 @@ function* userRowGenerator(accounts) {
 
     for (const acc of accounts) {
         const tr = document.createElement("tr");
+        
+        // ¡IMPORTANTE! Accedemos a las propiedades con guion bajo (_)
         tr.innerHTML = `
-            <td>${acc.id}</td>
-            <td>${acc.description}</td>
-            <td>${acc.creditLine > 0 ? "💳 CREDIT" : "💰 STANDARD"}</td>
-            <td>${currency.format(acc.creditLine)}</td>
-            <td>${dateFmt.format(new Date(acc.beginBalanceTimestamp))}</td>
-            <td>${currency.format(acc.balance)}</td>
-            <td style="color: #00ff00; font-weight: bold;">${currency.format(acc.balance)}</td>
+            <td>${acc._id}</td>
+            <td>${acc._description}</td>
+            <td>${acc._creditLine > 0 ? "💳 CREDIT" : "💰 STANDARD"}</td>
+            <td>${currency.format(acc._creditLine)}</td>
+            <td>${dateFmt.format(new Date(acc._beginBalanceTimestamp))}</td>
+            <td style="color: #00ff00; font-weight: bold;">${currency.format(acc._balance)}</td>
             <td>
                 <button class="neon-button" style="width:auto; padding:5px 10px;" 
-                    onclick="goToMovements('${acc.id}', '${acc.balance}', '${acc.creditLine}')">👁️ Ver</button>
+                    onclick="goToMovements('${acc._id}', '${acc._balance}', '${acc._creditLine}')">👁️ Ver</button>
                 <button class="neon-button" style="width:auto; padding:5px 10px; background:#ef4444;" 
-                    onclick="deleteAccount('${acc.id}')">🗑️ Borrar</button>
+                    onclick="deleteAccount('${acc._id}')">🗑️ Borrar</button>
             </td>
         `;
         yield tr;
@@ -139,8 +149,12 @@ async function deleteAccount(id) {
     }
 }
 
+/**
+ * CALCULAR BALANCE (Adaptado a guiones bajos)
+ */
 function calculateGlobalBalance(accounts) {
-    const total = accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+    // Usamos acc._balance para que la suma no de 0
+    const total = accounts.reduce((sum, acc) => sum + (parseFloat(acc._balance) || 0), 0);
     const formatted = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(total);
     const elTop = document.getElementById("totalBalanceTop");
     if (elTop) elTop.textContent = formatted;
