@@ -1,102 +1,147 @@
-/**
- * URL del servicio RESTful para obtener las cuentas de un cliente
- */
-const SERVICE_URL = "http://localhost:8080/CRUDBankServerSide/webresources/account/customer/";
+// VARIABLES GLOBALES (Rutas relativas para evitar errores de puerto)
+const SERVICE_URL = "/CRUDBankServerSide/webresources/account/customer/";
+const ACCOUNT_URL = "/CRUDBankServerSide/webresources/account/";
 
-/**
- * Función generadora que emite filas de tabla
- * Genera cada fila (tr) dinámicamente usando yield
- */
-function* accountRowGenerator(accounts) {
-    for (const account of accounts) {
-        const tr = document.createElement("tr"); //
-        
-        // Mapeamos los campos del XML: id, description, balance, creditLine
-        ["id", "description", "balance", "creditLine"].forEach(field => {
-            const td = document.createElement("td");
-            let value = account[field];
-
-            // Aplicamos formato REAL (decimales) como pide el profe
-            if (field === "balance" || field === "creditLine") {
-                value = parseFloat(value).toFixed(2) + " €";
-                // Si el balance es negativo, lo ponemos en rojo
-                if (field === "balance" && parseFloat(account[field]) < 0) {
-                    td.style.color = "red";
-                }
-            }
-            
-            td.textContent = value; //
-            tr.appendChild(td); //
-        });
-
-        // Añadimos un botón de acción para conectar con la parte de Víctor
-        const tdAction = document.createElement("td");
-        const btn = document.createElement("button");
-        btn.textContent = "Ver Movimientos";
-        btn.className = "acceder"; // Clase de tu CSS
-        btn.onclick = () => {
-            sessionStorage.setItem("currentAccount.id", account.id);
-            window.location.href = "movements.html";
-        };
-        tdAction.appendChild(btn);
-        tr.appendChild(tdAction);
-
-        yield tr; //
-    }
-}
-
-/**
- * Recupera las cuentas en formato XML del servidor
- */
-async function fetchAccounts() {
-    // Obtenemos el ID del cliente guardado en el login
-    const customerId = sessionStorage.getItem("customer.id");
-
-    const response = await fetch(SERVICE_URL + customerId, {
-        method: "GET", //
-        headers: {
-            "Accept": "application/xml" //
-        }
-    });
-    const xmlText = await response.text(); //
-    return parseAccountsXML(xmlText); //
-}
-
-/**
- * Procesa el texto XML y devuelve un array de objetos
- */
-function parseAccountsXML(xmlText) {
-    const parser = new DOMParser(); //
-    const xmlDoc = parser.parseFromString(xmlText, "application/xml"); //
-    const accounts = [];
-    const accountNodes = xmlDoc.getElementsByTagName("account"); //
-
-    for (const node of accountNodes) {
-        accounts.push({
-            id: node.getElementsByTagName("id")[0].textContent,
-            description: node.getElementsByTagName("description")[0].textContent,
-            balance: node.getElementsByTagName("balance")[0].textContent,
-            creditLine: node.getElementsByTagName("creditLine")[0].textContent
-        });
-    }
-    return accounts; //
-}
-
-/**
- * Construye la tabla al cargar la página
- */
-async function buildAccountsTable() {
-    const accounts = await fetchAccounts(); //
-    const tbody = document.querySelector("#accountsTable tbody"); //
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Carga inicial de datos
+    pageLoadHandler();
     
-    if (!tbody) return;
-    tbody.innerHTML = ""; // Limpiamos contenido previo
+    // 2. Mostrar nombre del usuario en la cabecera
+    const nombre = `${sessionStorage.getItem("customer.firstName")} ${sessionStorage.getItem("customer.lastName")}`;
+    const infoDiv = document.querySelector(".infousu");
+    if (infoDiv) infoDiv.innerHTML = `<p style="color:#00ff00;">Hola, ${nombre}</p>`;
 
-    const rowGenerator = accountRowGenerator(accounts); //
-    for (const row of rowGenerator) {
-        tbody.appendChild(row); //
+    // 3. CREATE: Manejo del formulario de nueva cuenta
+    const formAccount = document.getElementById("formAccount");
+    if (formAccount) {
+        formAccount.onsubmit = async (event) => {
+            event.preventDefault();
+            
+            const custIdRaw = sessionStorage.getItem("customer.id");
+            if (!custIdRaw) return alert("Sesión expirada");
+
+            // Limpieza del ID igual que tu compañero
+            const idLimpio = parseInt(custIdRaw.replace(/[,.]/g, ""));
+            const typeSelect = document.getElementById("accTypeSelect");
+            const creditInput = document.getElementById("accCredit");
+
+            const nuevaCuenta = {
+                id: Math.floor(Math.random() * 100000000),
+                description: document.getElementById("accDesc").value,
+                balance: 0.0,
+                creditLine: typeSelect.value === "CREDIT" ? parseFloat(creditInput.value) : 0.0,
+                beginBalance: 0.0,
+                // Formato de fecha que acepta Glassfish
+                beginBalanceTimestamp: new Date().toISOString().split('.')[0] + "Z",
+                "customers": [{ "id": idLimpio }] // Relación ManyToMany
+            };
+
+            try {
+                const response = await fetch(ACCOUNT_URL, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json" 
+                    },
+                    body: JSON.stringify(nuevaCuenta)
+                });
+
+                if (response.ok) {
+                    formAccount.reset();
+                    // Esperamos a que el servidor termine antes de recargar
+                    await pageLoadHandler(); 
+                } else {
+                    alert("Error creating account.");
+                }
+            } catch (error) {
+                console.error("Error en POST:", error);
+            }
+        };
+    }
+});
+
+/**
+ * READ: Obtener cuentas del cliente
+ */
+async function pageLoadHandler() {
+    try {
+        const rawId = sessionStorage.getItem("customer.id");
+        if (!rawId) return;
+        
+        // Limpiamos el ID de puntos y comas
+        const customerId = rawId.replace(/[,.]/g, "");
+        
+        // Anti-Cache: Añadimos el tiempo actual (?t=)
+        const response = await fetch(`${SERVICE_URL}${customerId}?t=${new Date().getTime()}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) return;
+
+        const accounts = await response.json();
+        
+        // Actualizamos el balance global
+        calculateGlobalBalance(accounts); 
+
+        const tbody = document.getElementById("tableBody");
+        if (tbody) {
+            tbody.innerHTML = ""; // Limpieza de tabla
+            const rowGenerator = userRowGenerator(accounts);
+            for (const row of rowGenerator) {
+                tbody.appendChild(row);
+            }
+        }
+    } catch (e) {
+        console.error("Loading error:", e);
     }
 }
 
-// Llamada automática al cargar la página
-buildAccountsTable();
+/**
+ * GENERADOR DE FILAS (yield)
+ */
+function* userRowGenerator(accounts) {
+    const currency = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
+    const dateFmt = new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    for (const acc of accounts) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${acc.id}</td>
+            <td>${acc.description}</td>
+            <td>${acc.creditLine > 0 ? "💳 CREDIT" : "💰 STANDARD"}</td>
+            <td>${currency.format(acc.creditLine)}</td>
+            <td>${dateFmt.format(new Date(acc.beginBalanceTimestamp))}</td>
+            <td>${currency.format(acc.balance)}</td>
+            <td style="color: #00ff00; font-weight: bold;">${currency.format(acc.balance)}</td>
+            <td>
+                <button class="neon-button" style="width:auto; padding:5px 10px;" 
+                    onclick="goToMovements('${acc.id}', '${acc.balance}', '${acc.creditLine}')">👁️ Ver</button>
+                <button class="neon-button" style="width:auto; padding:5px 10px; background:#ef4444;" 
+                    onclick="deleteAccount('${acc.id}')">🗑️ Borrar</button>
+            </td>
+        `;
+        yield tr;
+    }
+}
+
+function goToMovements(id, balance, credit) {
+    sessionStorage.setItem("account.id", id);
+    sessionStorage.setItem("account.balance", balance);
+    sessionStorage.setItem("account.creditLine", credit);
+    window.location.href = "movements.html";
+}
+
+async function deleteAccount(id) {
+    if (confirm(`¿Eliminar cuenta ${id}?`)) {
+        await fetch(ACCOUNT_URL + id, { method: "DELETE" });
+        await pageLoadHandler();
+    }
+}
+
+function calculateGlobalBalance(accounts) {
+    const total = accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+    const formatted = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(total);
+    const elTop = document.getElementById("totalBalanceTop");
+    if (elTop) elTop.textContent = formatted;
+}

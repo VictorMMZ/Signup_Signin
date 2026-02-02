@@ -13,58 +13,126 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('../images/fondo.jpg') no-repeat center center fixed;
-    background-size: cover;
+    
     color: #fff;
   }
   </style>
     </head>
     
-        <body background="../images/fondo.jpg">
-<div class="content">
-    <header class="top-bar">
-        <div class="logo-area">
-            <a href="../index.html">
-                <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
-            </a>
+<body class="moves">
+     <div class="content">
+            <header class="top-bar">
+                <div class="logo-area">
+                    <a href="../index.html">
+                        <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
+                    </a>
+                </div>
+                  <div class="nav_menu">
+                    <button>Finances</button>
+                    <button>Loans</button>
+                    <button>Customer Area</button>
+                    </div>
+                 
+                <div class="info">
+          <div class="accounttype"></div>
+          <div class="infousu"></div>
+          <div class="idaccount"></div>
+          <div class="infobalance"></div>  
+         </div>
+         
+                <nav class="nav-bar">
+            
+         
+                    
+                    <a href="../index.html" class="nav-item-moves">🔒 Sign out</a>
+                </nav>
+            </header>
+        
+        
+        <div class="menu">
+            
+             
+           
+           <button id="deposit">Deposit Money</button>
+
+            <button id="take">Take Money</button>
+      
         </div>
-        
-        <nav class="nav-bar">
-            <a href="../index.html" class="nav-item active">🔒 Sign out</a>
-        </nav>
-    </header>
-
-    <div class="menu">
-        <button id="deposit">Deposit Money</button>
-        <button id="take">Take Money</button>
-       
-    </div>
-
-    <table id="usersTable">
-        <thead>
-            <tr>
+         
+        <div class="principal"> 
+          <table id="movementTable">
+              <h1 id="movementsTitle">Transactions History</h1>
+            <thead>
+              <tr>
                 <th>TimeStamp</th>
-                <th>amount</th>
-                <th>balance</th>
-            </tr>
-        </thead>
-        <tbody id="tbodyMovements"></tbody>
-    </table>
-    
-    <div class="menu">
-        
-        <button id="deletemove" onclick="deleteLast(event)">Delete Last Movement</button>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyMovements"></tbody>
+          </table>
+
+        </div> 
+       <form id="formDeposit">
+            <p>¿Cuanto dinero desea ingresar?</p>
+                <label for="totaldepo">Cantidad (€):</label>
+                <input type="text" id="totaldepo" required>
+                <input type="hidden" id="deposit_1" name="deposit_1" value="Deposit">
+                
+                <button type="submit" id="depositbutton" onclick="createDepositMovement(event)">Confirm</button>
+                
+        </form>
+         <form id="formTake">
+           <p>¿Cuanto dinero desea retirar?</p>
+                <label for="totaltake">Cantidad (€):</label>
+                <input type="text" id="totaltake" name="totaltake" required>
+                <input type="hidden" id="take_1" name="take_1" value="Take">
+                <button type="submit" id="takebutton" onclick="createTakeMovement(event)">Confirm</button>
+            
+        </form>
+
+            <div class="menu">
+                <button id="deletemove" onclick="confirmDelete(event)">Delete Last Movement</button>
+        </div>
+         
+         <footer class="footer">
+    <div class="footer-content">
+
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p>Email: contacto@quantummbank.com</p>
+            <p>Tel: +34 921 345 887</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>Links</h3>
+            <a href="#">Login</a>
+            <a href="#">About us</a>
+            <a href="#">Services</a>
+        </div>
+
+        <div class="footer-section">
+            <h3>Follow us</h3>
+            <div class="socials">
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+
     </div>
 
+    <div class="footer-bottom">
+        © 2026 all rights reserved
+    </div>
+</footer>
 
-
-
-
-
+             
+            
             <script src="../js/generate_function.js"></script>
             <script src="../js/clases.js"></script>
-</div>
+    </div>
     </body>
 </html>
-
 

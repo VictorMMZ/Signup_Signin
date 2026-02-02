@@ -1,95 +1,45 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bienvenido | Neo-Bank</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('../images/fondo.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
-  }
-
-  .main-layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.5); /* ligero overlay para que el texto se vea */
-  }
-
-  .logo-img {
-    width: 150px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    border: 2px solid #fff;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-  }
-
-  p {
-    font-size: 1.5rem;
-    margin-top: 0;
-  }
-
-  .saldo {
-    font-weight: bold;
-    color: #00ff00;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Dashboard | Neo-Bank</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-    
-    <div class="main-layout">
-    <a href="../index.html">
-        <img src="../images/logo.jpg" alt="Neo-Bank Logo" class="logo-img">
-    </a>
+<body class="moves">
+    <div class="content">
+        <header class="top-bar">
+            <div class="logo-area"><img src="../images/logo.jpg" class="logo-img"></div>
+            <div class="info"><div class="infousu"></div></div>
+        </header>
 
-    <h1 id="bienvenida">Welcome, User</h1>
+        <main class="principal" style="text-align: center; padding-top: 50px;">
+            <h1 style="color: white;">Welcome to Neo-Bank</h1>
+            <p style="color: #9ca3af; margin-bottom: 50px;">Select an option to manage your finances</p>
+            
+            <div style="display: flex; justify-content: center; gap: 40px;">
+                <div class="form-container" style="width: 300px; padding: 30px; border: 1px solid #4f46e5;">
+                    <div style="font-size: 50px; margin-bottom: 15px;">🏦</div>
+                    <h3 style="color: #fff;">My Accounts</h3>
+                    <p style="color: #9ca3af; font-size: 0.9em; margin-bottom: 20px;">Manage, create and delete your current bank accounts.</p>
+                    <button onclick="window.location.href='accounts.html'" class="neon-button">GO TO ACCOUNTS</button>
+                </div>
 
-    <div id="account-area" style="width: 90%; margin: 20px auto; padding: 20px; background-color: rgba(0, 0, 0, 0.5); border-radius: 15px;">
-        <h2 style="color: #4f46e5;">My Bank Accounts</h2>
-
-        <table id="accountsTable" style="width: 100%; border-collapse: collapse; color: white; border: 1px solid #374151;">
-            <thead>
-                <tr style="background-color: #4f46e5;">
-                    <th style="padding: 10px; border: 1px solid #374151;">ID Account</th>
-                    <th style="padding: 10px; border: 1px solid #374151;">Type / Description</th>
-                    <th style="padding: 10px; border: 1px solid #374151;">Balance</th>
-                    <th style="padding: 10px; border: 1px solid #374151;">Credit Line</th>
-                    <th style="padding: 10px; border: 1px solid #374151;">Action</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyAccounts" style="text-align: center;">
-                </tbody>
-        </table>
-
-        <div style="margin-top: 20px;">
-            <button id="btnCreateAccount" class="neon-button" style="width: auto; padding: 10px 20px; background-color: #4f46e5; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                + Open New Account
-            </button>
-        </div>
+                <div class="form-container" style="width: 300px; padding: 30px; border: 1px solid #4f46e5;">
+                    <div style="font-size: 50px; margin-bottom: 15px;">💸</div>
+                    <h3 style="color: #fff;">Movements</h3>
+                    <p style="color: #9ca3af; font-size: 0.9em; margin-bottom: 20px;">Check your transaction history and deposits.</p>
+                    <button onclick="window.location.href='movements.html'" class="neon-button">GO TO MOVEMENTS</button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 50px;">
+                <a href="../index.html" style="color: #ef4444; text-decoration: none; font-weight: bold;">🔒 Sign Out</a>
+            </div>
+        </main>
     </div>
-
-    <div style="margin-top: 20px;">
-        <a id="movements" href="movements.html" style="color: #e5e7eb; text-decoration: none; font-weight: bold;">
-            Go to Global Movements 🏦
-        </a>
-    </div>
-</div>
-
-<script src="../js/clases.js"></script>
-<script src="../js/main.js"></script>
-<script src="../js/account.js"></script>
-    
-    
+    <script>
+        const nombre = sessionStorage.getItem("customer.firstName") || "User";
+        document.querySelector(".infousu").innerHTML = `<p>Welcome, ${nombre}</p>`;
+    </script>
 </body>
 </html>
