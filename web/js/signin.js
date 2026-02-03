@@ -125,7 +125,7 @@ msgBox.style.display = 'none';
              
                               setTimeout(() => {
                                 signInForm.submit() ;
-                                 window.location.href = "main.html"; }, 2000);
+                                 window.location.href = "../html/main.html"; }, 2000);
                             
                                       
                         })
