@@ -75,7 +75,7 @@ function* movementsRowGenerator(movements) {
          });
        
          
-        buildMovementsTable(); 
+       await  buildMovementsTable(); 
          
        
         
@@ -88,7 +88,7 @@ function* movementsRowGenerator(movements) {
      // creamos la variable en la que guardaremos el id del ultimo movimiento ya que cada movimiento tiene un numero de id mayor al anterior
      const lastoperation=movements[movements.length-1].id;
      //llamamos tanto a la funcion fetch de eliminar como al constuir la tabla para que se haga dinamicamente(todavia queda corregir)
-     fetchMovementsForRemove(lastoperation);
+     return fetchMovementsForRemove(lastoperation);
      
           
  
@@ -175,12 +175,12 @@ async function confirmDelete(event){
     const xml = parser.parseFromString(xmlText, "application/xml");
 
     account = new Account(
+        xml.getElementsByTagName("id")[0].textContent,
+        xml.getElementsByTagName("description")[0].textContent,
         xml.getElementsByTagName("balance")[0].textContent,
+        xml.getElementsByTagName("creditLine")[0].textContent,
         xml.getElementsByTagName("beginBalance")[0].textContent,
         xml.getElementsByTagName("beginBalanceTimestamp")[0].textContent,
-        xml.getElementsByTagName("creditLine")[0].textContent,
-        xml.getElementsByTagName("description")[0].textContent,
-        xml.getElementsByTagName("id")[0].textContent,
         xml.getElementsByTagName("type")[0].textContent
     );
     
