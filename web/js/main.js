@@ -9,4 +9,3 @@
       // Si no hay datos, redirigimos al login
       window.location.href = "signin.html";
     }
-

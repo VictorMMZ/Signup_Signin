@@ -27,4 +27,3 @@ function Customer(  id,
     this.password = password;
 }
 
-

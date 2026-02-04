@@ -287,4 +287,3 @@ function handleSignUpOnClick(event) {
         sendSignUpRequest();
     }
 }
-

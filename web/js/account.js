@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 beginBalance: 0.0,
                 // Formato de fecha que acepta Glassfish
                 beginBalanceTimestamp: new Date().toISOString().split('.')[0] + "Z",
-                "customers": [{ "id": idLimpio }] 
+                "customers": [{ "id": idLimpio }] // Relación ManyToMany
             };
 
             try {
@@ -72,12 +72,19 @@ async function pageLoadHandler() {
         if (!rawId) return;
         
         const customerId = rawId.replace(/[,.]/g, "");
-        const response = await fetch(`${SERVICE_URL}${customerId}?t=${new Date().getTime()}`);
+        const response = await fetch(`${SERVICE_URL}${customerId}`, {
+                    method: "GET",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json" 
+                    }
+                });
+      
 
         if (response.ok) {
             const rawData = await response.json(); 
             
-            // CONVERSIÓN: Creamos objetos de la clase Account 
+            // CONVERSIÓN: Creamos objetos de la clase Account para que tengan los guiones bajos
             const accounts = rawData.map(acc => new Account(
                 acc.id, 
                 acc.description, 
@@ -85,7 +92,7 @@ async function pageLoadHandler() {
                 acc.creditLine, 
                 acc.beginBalance, 
                 acc.beginBalanceTimestamp, 
-                acc.creditLine > 0 ? "CREDIT" : "STANDARD"
+                acc.type > 0 ? "CREDIT" : "STANDARD"
             ));
 
             console.log("Cuentas cargadas con guiones bajos:", accounts);
@@ -107,7 +114,7 @@ async function pageLoadHandler() {
 }
 
 /**
- * GENERADOR DE FILAS 
+ * GENERADOR DE FILAS (Adaptado a guiones bajos)
  */
 function* userRowGenerator(accounts) {
     const currency = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
@@ -116,29 +123,30 @@ function* userRowGenerator(accounts) {
     for (const acc of accounts) {
         const tr = document.createElement("tr");
         
-        // 
+        // ¡IMPORTANTE! Accedemos a las propiedades con guion bajo (_)
         tr.innerHTML = `
-            <td>${acc.id}</td>
-            <td>${acc.description}</td>
-            <td>${acc.creditLine > 0 ? "💳 CREDIT" : "💰 STANDARD"}</td>
-            <td>${currency.format(acc.creditLine)}</td>
-            <td>${dateFmt.format(new Date(acc.beginBalanceTimestamp))}</td>
-            <td style="color: #00ff00; font-weight: bold;">${currency.format(acc.balance)}</td>
+            <td>${acc._id}</td>
+            <td>${acc._description}</td>
+            <td>${acc._creditLine > 0 ? "💳 CREDIT" : "💰 STANDARD"}</td>
+            <td>${currency.format(acc._creditLine)}</td>
+            <td>${dateFmt.format(new Date(acc._beginBalanceTimestamp))}</td>
+            <td style="color: #00ff00; font-weight: bold;">${currency.format(acc._balance)}</td>
             <td>
                 <button class="neon-button" style="width:auto; padding:5px 10px;" 
-                    onclick="goToMovements('${acc.id}', '${acc.balance}', '${acc.creditLine}')">👁️ Ver</button>
+                    onclick="goToMovements('${acc._id}', '${acc._balance}', '${acc._creditLine}')">👁️ Ver</button>
                 <button class="neon-button" style="width:auto; padding:5px 10px; background:#ef4444;" 
-                    onclick="deleteAccount('${acc.id}')">🗑️ Borrar</button>
+                    onclick="deleteAccount('${acc._id}')">🗑️ Borrar</button>
             </td>
         `;
         yield tr;
     }
 }
 
-function goToMovements(id, balance, credit) {
+function goToMovements(id, balance, credit,beginBalance) {
     sessionStorage.setItem("account.id", id);
     sessionStorage.setItem("account.balance", balance);
     sessionStorage.setItem("account.creditLine", credit);
+    sessionStorage.setItem("account.beginBalance", beginBalance);
     window.location.href = "movements.html";
 }
 
@@ -150,11 +158,11 @@ async function deleteAccount(id) {
 }
 
 /**
- * CALCULAR BALANCE 
+ * CALCULAR BALANCE (Adaptado a guiones bajos)
  */
 function calculateGlobalBalance(accounts) {
     // Usamos acc._balance para que la suma no de 0
-    const total = accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+    const total = accounts.reduce((sum, acc) => sum + (parseFloat(acc._balance) || 0), 0);
     const formatted = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(total);
     const elTop = document.getElementById("totalBalanceTop");
     if (elTop) elTop.textContent = formatted;
