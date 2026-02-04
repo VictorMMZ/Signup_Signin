@@ -16,7 +16,7 @@ const accountid = "account/" + idaccount;
 // Verificación de seguridad: Si no hay cuenta seleccionada, redirigir
 if (!idaccount) {
     alert("No se ha seleccionado ninguna cuenta.");
-    window.location.href = "accounts.html";
+    window.location.href = "main.html";
 }
 
 const sesionusu = document.querySelector(".infousu");
