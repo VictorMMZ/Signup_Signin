@@ -109,12 +109,6 @@ html, body {
  flex: 1;
 }
 /* Estilo de Inputs y Labels */
-label {
- display: block;
- margin-top: 15px;
- margin-bottom: 5px;
- font-size: 0.9em;
-}
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -215,10 +209,6 @@ input:focus {
 }
 
 /* Logo */
-.logo-img {
-    height: 60px;
-    border-radius: 8px;
-}
 
 /* Nav */
 .nav-bar .nav-item {
@@ -294,6 +284,7 @@ button{
     display: inline-block;
     box-shadow: 0 4px 10px rgba(80, 60, 200, 0.3);
     height: 50px;
+    display: none;
 }
 
 
@@ -402,7 +393,7 @@ button{
     height: 60px;
     margin:auto;
     text-decoration:underline;
-    color:#003b8b;
+    color:#fffff;
     font-size:2em; 
     text-align: center;
     
@@ -528,12 +519,7 @@ display: none;
 
 /* Media Query para móviles */
 @media (max-width: 768px) {
- .main-layout {
- flex-direction: column; /* Apila el sidebar y el formulario */
- width: 100%;
- max-width: none;
- border-radius: 0;
- }
+
  .sidebar {
  width: 90%;
  padding: 20px;
@@ -561,3 +547,115 @@ display: none;
 */
  }
 }
+
+
+
+/* --- Layout Principal --- */
+
+
+/* --- Panel Lateral (Sidebar) --- */
+
+
+/* --- Contenedor de Formularios y Contenido --- */
+.form-container, .principal {
+    flex-grow: 1;
+    padding: 40px;
+    background-color: #111827;
+}
+
+h2, h1 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 25px;
+}
+
+/* --- Inputs y Formularios --- */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #9ca3af;
+}
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    background-color: #1f2937;
+    color: #ffffff;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+input:focus, select:focus {
+    border-color: #4f46e5;
+    outline: none;
+    box-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+}
+
+/* --- Botones --- */
+.neon-button, .acceder {
+    width: 100%;
+    padding: 14px;
+    margin-top: 30px;
+    background-color: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+.neon-button:hover, .acceder:hover {
+    background-color: #4338ca;
+    transform: translateY(-2px);
+}
+
+/* --- Estilos de Tabla Profesional --- */
+#usersTable {
+    width: 100%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    color: #111827;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+#usersTable thead {
+    background: linear-gradient(90deg, #003b8b, #0074d9);
+    color: #ffffff;
+}
+
+#usersTable th, #usersTable td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+}
+
+#usersTable tbody tr:nth-child(even) {
+    background-color: #f3f4f6;
+}
+
+#usersTable tbody tr:hover {
+    background-color: #e0edff;
+}
+
+/* --- Utilidades --- */
+.error {
+    color: #ef4444;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+

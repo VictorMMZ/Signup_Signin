@@ -92,7 +92,7 @@ async function pageLoadHandler() {
                 acc.creditLine, 
                 acc.beginBalance, 
                 acc.beginBalanceTimestamp, 
-                acc.creditLine > 0 ? "CREDIT" : "STANDARD"
+                acc.type > 0 ? "CREDIT" : "STANDARD"
             ));
 
             console.log("Cuentas cargadas con guiones bajos:", accounts);
