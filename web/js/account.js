@@ -33,7 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 beginBalance: 0.0,
                 // Formato de fecha que acepta Glassfish
                 beginBalanceTimestamp: new Date().toISOString().split('.')[0] + "Z",
-                "customers": [{ "id": idLimpio }] // Relación ManyToMany
+                "customers": [{ "id": idLimpio }], // Relación ManyToMany
+                type:typeSelect.value
             };
 
             try {
@@ -92,7 +93,7 @@ async function pageLoadHandler() {
                 acc.creditLine, 
                 acc.beginBalance, 
                 acc.beginBalanceTimestamp, 
-                acc.type > 0 ? "CREDIT" : "STANDARD"
+                acc.type
             ));
 
             console.log("Cuentas cargadas con guiones bajos:", accounts);
