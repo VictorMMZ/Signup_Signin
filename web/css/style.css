@@ -285,6 +285,8 @@ button{
     box-shadow: 0 4px 10px rgba(80, 60, 200, 0.3);
     height: 50px;
     display: none;
+
+
 }
 
 
@@ -393,7 +395,7 @@ button{
     height: 60px;
     margin:auto;
     text-decoration:underline;
-    color:#fffff;
+    color:#ffffff;
     font-size:2em; 
     text-align: center;
     
