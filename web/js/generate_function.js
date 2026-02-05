@@ -188,6 +188,7 @@ async function confirmDelete(event){
     
    
    infoaccounttype.innerHTML=`<p> Type ${account._type}</p>`;
+   
 
     return account;
 
@@ -379,6 +380,9 @@ async function showCredit(){
     const showcredit=document.querySelector(".credito");
     if(accountcredit._type==="CREDIT"){
         showcredit.textContent="Credit Line " +formateadorEU.format(accountcredit._creditLine);
+        
+    }else{
+        showcredit.style.display="none";
     }
   
 }
