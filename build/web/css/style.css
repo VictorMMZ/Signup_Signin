@@ -284,7 +284,23 @@ button{
     display: inline-block;
     box-shadow: 0 4px 10px rgba(80, 60, 200, 0.3);
     height: 50px;
-    display: none;
+    display: block;
+}
+
+
+.backtomain{
+   width: 200px;
+    color: white;
+    text-align: center;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size:1.2em; 
+    color: white;
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+    
+    
 }
 
 

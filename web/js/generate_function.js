@@ -1,3 +1,4 @@
+
 /* 
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/javascript.js to edit this template
@@ -212,7 +213,8 @@ async function buildMovementsTable() {
  if (movements.length>0){
       balanceusu.innerHTML = `<p id="saldo" >Balance:     ${movements[movements.length-1].balance} €</p>`;
   }else{
-    balanceusu.innerHTML = `<p id="saldo" >Balance:     ${sessionStorage.getItem("account._beginBalance")} €</p>`;
+    balanceusu.innerHTML = `<p id="saldo">Balance: ${sessionStorage.getItem("account._beginBalance") || 0} €</p>`;
+
 }
  }
  
