@@ -3,15 +3,15 @@ const SERVICE_URL = "/CRUDBankServerSide/webresources/account/customer/";
 const ACCOUNT_URL = "/CRUDBankServerSide/webresources/account/";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Carga inicial de datos
+
     pageLoadHandler();
     
-    // 2. Mostrar nombre del usuario en la cabecera
+
     const nombre = `${sessionStorage.getItem("customer.firstName")} ${sessionStorage.getItem("customer.lastName")}`;
     const infoDiv = document.querySelector(".infousu");
     if (infoDiv) infoDiv.innerHTML = `<p style="color:#00ff00;">Hola, ${nombre}</p>`;
 
-    // 3. CREATE: Manejo del formulario de nueva cuenta
+ 
     const formAccount = document.getElementById("formAccount");
     if (formAccount) {
         formAccount.onsubmit = async (event) => {
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const custIdRaw = sessionStorage.getItem("customer.id");
             if (!custIdRaw) return alert("Sesión expirada");
 
-            // Limpieza del ID igual que tu compañero
+     
             const idLimpio = custIdRaw.replace(/[,.]/g, "").trim();
             const typeSelect = document.getElementById("accTypeSelect");
             const creditInput = document.getElementById("accCredit");
@@ -31,9 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 balance: 0.0,
                 creditLine: typeSelect.value === "CREDIT" ? parseFloat(creditInput.value) : 0.0,
                 beginBalance: 0.0,
-                // Formato de fecha que acepta Glassfish
                 beginBalanceTimestamp: new Date().toISOString().split('.')[0] + "Z",
-                "customers": [{ "id": idLimpio }] // Relación ManyToMany
+                "customers": [{ "id": idLimpio }], 
+                type:typeSelect.value
             };
 
             try {
@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     formAccount.reset();
-                    // Esperamos a que el servidor termine antes de recargar
                     await pageLoadHandler(); 
                 } else {
                     alert("Error creating account.");
@@ -60,12 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-/**
- * READ: Obtener cuentas del cliente
- */
-/**
- * READ: Obtener cuentas del cliente y convertirlas a objetos de Clase
- */
+
 async function pageLoadHandler() {
     try {
         const rawId = sessionStorage.getItem("customer.id");
@@ -84,7 +78,6 @@ async function pageLoadHandler() {
         if (response.ok) {
             const rawData = await response.json(); 
             
-            // CONVERSIÓN: Creamos objetos de la clase Account para que tengan los guiones bajos
             const accounts = rawData.map(acc => new Account(
                 acc.id, 
                 acc.description, 
@@ -92,7 +85,7 @@ async function pageLoadHandler() {
                 acc.creditLine, 
                 acc.beginBalance, 
                 acc.beginBalanceTimestamp, 
-                acc.type > 0 ? "CREDIT" : "STANDARD"
+                acc.type
             ));
 
             console.log("Cuentas cargadas con guiones bajos:", accounts);
@@ -113,9 +106,6 @@ async function pageLoadHandler() {
     }
 }
 
-/**
- * GENERADOR DE FILAS (Adaptado a guiones bajos)
- */
 function* userRowGenerator(accounts) {
     const currency = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
     const dateFmt = new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -123,7 +113,6 @@ function* userRowGenerator(accounts) {
     for (const acc of accounts) {
         const tr = document.createElement("tr");
         
-        // ¡IMPORTANTE! Accedemos a las propiedades con guion bajo (_)
         tr.innerHTML = `
             <td>${acc._id}</td>
             <td>${acc._description}</td>
@@ -157,11 +146,8 @@ async function deleteAccount(id) {
     }
 }
 
-/**
- * CALCULAR BALANCE (Adaptado a guiones bajos)
- */
+
 function calculateGlobalBalance(accounts) {
-    // Usamos acc._balance para que la suma no de 0
     const total = accounts.reduce((sum, acc) => sum + (parseFloat(acc._balance) || 0), 0);
     const formatted = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(total);
     const elTop = document.getElementById("totalBalanceTop");
