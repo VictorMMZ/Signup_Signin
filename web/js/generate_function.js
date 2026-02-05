@@ -1,3 +1,4 @@
+
 /* 
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/javascript.js to edit this template
@@ -94,11 +95,15 @@ function* movementsRowGenerator(movements) {
  
 }
    
-
+/*
+Funcion para confirmar la elminación de la cuenta
+*/
 async function confirmDelete(event){
     if (confirm("¿Estás seguro de que deseas borrar este movimiento?")) {
         // Si se pulsa si
        
+       
+       // Llamamos a las funciones que queremos que ocurran una vez confirmemos
    await deleteLast();
    await putAccount();
        
@@ -128,20 +133,14 @@ async function confirmDelete(event){
                     hour: "2-digit",
                     minute: "2-digit",
                     second: "2-digit" });
-                
-                /*const formateadorEU = new Intl.NumberFormat('es-ES', {
-                    style: 'currency',
-                    currency: 'EUR',
-                    minimumFractionDigits: 2 // Asegura dos decimales
-                    });
-            */
+              
                 const amount=movementNode.getElementsByTagName("amount")[0].textContent;
                 
-               // const formateamount= formateadorEU.format(amount);
+              
                 
                 const balance=movementNode.getElementsByTagName("balance")[0].textContent;
-                // const formatedbalance= formateadorEU.format(balance);
-                
+               
+                // hacemos push al array de movimientos para que tenga los datos 
                 movements.push({
                     
                     
@@ -155,8 +154,17 @@ async function confirmDelete(event){
                     
                 });
              }
+             
+             //devolvemos el array 
         return movements;
      }
+     
+     
+     
+     /*
+      * Funcion para utilizar la cuenta que nos Adrian de cuentas y utilizar sus datos como si fuese un objeto 
+      * 
+      */
      async function cargarCuenta() {
     const response = await fetch(
         `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
@@ -187,13 +195,17 @@ async function confirmDelete(event){
     
    
    infoaccounttype.innerHTML=`<p> Type ${account._type}</p>`;
+   
 
     return account;
 
 
 }
 
-
+/*
+ * llamamos al funcion ya qu quermos los datos de la cuenta si o si
+ * 
+ */
 cargarCuenta();
  
      
@@ -212,33 +224,41 @@ async function buildMovementsTable() {
  if (movements.length>0){
       balanceusu.innerHTML = `<p id="saldo" >Balance:     ${movements[movements.length-1].balance} €</p>`;
   }else{
-    balanceusu.innerHTML = `<p id="saldo" >Balance:     ${sessionStorage.getItem("account._beginBalance")} €</p>`;
+    balanceusu.innerHTML = `<p id="saldo">Balance: ${sessionStorage.getItem("account._beginBalance") || 0} €</p>`;
+
 }
  }
  
-
+/*
+ * Aqui hacemos las constantes relacionando con el DOM 
+ */
 const btnMostrarDepo = document.getElementById("deposit");
 const formDepo = document.getElementById("formDeposit");
 const btnMostrarTake = document.getElementById("take");
 const formTake = document.getElementById("formTake");
 const errorTake= document.getElementById("error_password_2");
 btnMostrarDepo.addEventListener("click", () => {
-    // Mostrar 
+    // Mostrar o no mostrar según boton
+
     formDepo.style.display = "block"; 
      formTake.style.display = "none"; 
     
      });
      
      btnMostrarTake.addEventListener("click", () => {
-    // Mostrar 
+    // Mostrar o no mostrar según boton
     formTake.style.display = "block"; 
     formDepo.style.display = "none"; 
 
      });
-// Call on page load
+// Llamar a la funcion de crear la tabla al cargar la pagina 
     buildMovementsTable();
 
 
+
+/*
+ * Funcion para hacer ingresos
+ */
 async function createDepositMovement(event) {
     event.preventDefault();
 
@@ -287,11 +307,16 @@ async function createDepositMovement(event) {
     
 }
 
+/*
+ * funcion para hacer retiros 
+ */
 async function createTakeMovement(event) {
     event.preventDefault();
     const accounttake= await cargarCuenta();
 
     try {
+             // Contamos con el tipo de cuenta al hacer retiro ya que varia la cantidad que se pueda retirar si es Standard o Credit
+
         if(accounttake._type==="STANDARD"){
         
         const timestamp = new Date().toISOString();
@@ -318,12 +343,15 @@ async function createTakeMovement(event) {
             },
             body: xmlBody
         });
+        
          formTake.style.display = "none"; 
 
         if (!response.ok) throw new Error("Error in response");
 
         buildMovementsTable();
 
+
+     // Contamos con el tipo de cuenta al hacer retiro ya que varia la cantidad que se pueda retirar si es Standard o Credit
     }if(accounttake._type==="CREDIT"){
         const timestamp = new Date().toISOString();
         const amount = parseFloat(document.getElementById("totaltake").value);
@@ -371,12 +399,19 @@ async function createTakeMovement(event) {
 
 }
 
+
+/*
+ * funcion showCredit para mostrar el credito si la cuenta es Credit
+ */
 async function showCredit(){
    
     const accountcredit= await cargarCuenta();
     const showcredit=document.querySelector(".credito");
     if(accountcredit._type==="CREDIT"){
         showcredit.textContent="Credit Line " +formateadorEU.format(accountcredit._creditLine);
+        
+    }else{
+        showcredit.style.display="none";
     }
   
 }
@@ -384,7 +419,7 @@ async function showCredit(){
 showCredit();
 
 
-
+// función para hacer el update con un fetch PUT ya que el delete por si solo no actualiza la base de datos 
 
 async function putAccount() {
     // 1. Pedimos la cuenta al servidor en XML
@@ -395,22 +430,22 @@ async function putAccount() {
             headers: { "Accept": "application/xml" }
         }
     );
-     //aqui devuleve la respuesta del get en formato texto
+     //Aqui devuleve la respuesta del get en formato texto
     let xmlText = await response.text();
 
-    // 2. ParseaR el XML
+    //  ParseaR el XML
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, "application/xml");
 
-    // 3. Actualizar con el balance del  último movimiento (esto deberia de dart el ultimo movimiento despues de borrarlo)
+    // Actualizar con el balance del  último movimiento (esto deberia de dart el ultimo movimiento despues de borrarlo)
     const newBalance = Number(movements[movements.length - 1].balance);
     xmlDoc.getElementsByTagName("balance")[0].textContent = newBalance;
 
-    // 4. Serializas de nuevo el XML completo pasar de txt a xml para mandarlo en el put
+    // Serializar de nuevo el XML completo pasar de txt a xml para mandarlo en el put
     const serializer = new XMLSerializer();
     const updatedXML = serializer.serializeToString(xmlDoc);
 
-    // 5. Haces el PUT con TODO el XML de <account>
+    // Hago el PUT con TODO el XML de <account>
     await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
         method: "PUT",
         headers: {
