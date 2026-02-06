@@ -1,3 +1,4 @@
+
 /* 
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/javascript.js to edit this template
@@ -187,6 +188,7 @@ async function confirmDelete(event){
     
    
    infoaccounttype.innerHTML=`<p> Type ${account._type}</p>`;
+   
 
     return account;
 
@@ -212,7 +214,8 @@ async function buildMovementsTable() {
  if (movements.length>0){
       balanceusu.innerHTML = `<p id="saldo" >Balance:     ${movements[movements.length-1].balance} €</p>`;
   }else{
-    balanceusu.innerHTML = `<p id="saldo" >Balance:     ${sessionStorage.getItem("account._beginBalance")} €</p>`;
+    balanceusu.innerHTML = `<p id="saldo">Balance: ${sessionStorage.getItem("account._beginBalance") || 0} €</p>`;
+
 }
  }
  
@@ -377,6 +380,9 @@ async function showCredit(){
     const showcredit=document.querySelector(".credito");
     if(accountcredit._type==="CREDIT"){
         showcredit.textContent="Credit Line " +formateadorEU.format(accountcredit._creditLine);
+        
+    }else{
+        showcredit.style.display="none";
     }
   
 }
