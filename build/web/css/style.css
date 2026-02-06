@@ -284,23 +284,7 @@ button{
     display: inline-block;
     box-shadow: 0 4px 10px rgba(80, 60, 200, 0.3);
     height: 50px;
-    display: block;
-}
-
-
-.backtomain{
-   width: 200px;
-    color: white;
-    text-align: center;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-    font-size:1.2em; 
-    color: white;
-    box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
-    
-    
+    display: none;
 }
 
 
@@ -411,19 +395,28 @@ button{
     text-decoration:underline;
     color:#fffff;
     font-size:2em; 
-    text-align: center; 
+    text-align: center;
+    
+    
+    
+    
 }
+
+
 
 #formDeposit,#formTake{
 display: none;
 }
+
+
 
 .footer {
     background: #111827;
     color: #e5e7eb;
     padding: 30px 20px;
     margin-top:300px;
-    font-family: Arial, sans-serif;   
+    font-family: Arial, sans-serif;
+    
 }
 
 .footer-content {
@@ -521,37 +514,7 @@ display: none;
 }
 
 
-/* --- Estilos para la Columna de Saldo (Balance) --- */
-.balance-cell {
-    color: #00ff00; /* Verde neón */
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
-}
 
-/* --- Contenedor de botones en la tabla --- */
-.actions-container {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-}
-
-/* --- Ajuste específico para botones pequeños de tabla --- */
-.btn-small {
-    width: auto !important; /* Anula el 100% de la clase .neon-button */
-    padding: 6px 12px !important;
-    margin-top: 0 !important;
-    font-size: 0.85em !important;
-    text-transform: none !important;
-}
-
-.btn-delete {
-    background-color: #ef4444 !important; /* Rojo para borrar */
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3) !important;
-}
-
-.btn-delete:hover {
-    background-color: #dc2626 !important;
-}
 
 
 /* Media Query para móviles */
