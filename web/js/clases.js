@@ -27,7 +27,7 @@ class Account{
         this._beginBalanceTimestamp = beginBalanceTimestamp;
         this._type = type;
     }
-      // AÑADIDO: Método toJSON para Account
+      // AÑADIDO: toJSON para Account
     // Esto mapea tus propiedades internas (_prop) a las que espera el servidor (prop)
     toJSON() {
         return {
@@ -49,7 +49,11 @@ class Account{
     getBeginBalanceTimestamp() { return this._beginBalanceTimestamp; }
     getType() { return this._type; }
 }
-
+/**
+ * 
+ * @type {type}
+ * @todo Cambiar el nombre de la clase de Movements a Movement y quitar el _ del nombre de los atributos
+ */
 class Movements{
     
      _id;

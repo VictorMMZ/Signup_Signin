@@ -241,7 +241,12 @@ btnMostrarDepo.addEventListener("click", () => {
 // Call on page load
     buildMovementsTable();
 
-
+/**
+ * 
+ * @param {type} event
+ * @return {undefined}
+ * @fixme Encapsular los datos del movimiento en un nuevo objeto Movement antes de enviarlos al servidor.
+ */
 async function createDepositMovement(event) {
     event.preventDefault();
 
@@ -289,7 +294,9 @@ async function createDepositMovement(event) {
      
     
 }
-
+/**
+* @fixme Encapsular los datos del movimiento en un nuevo objeto Movement antes de enviarlos al servidor.
+*/
 async function createTakeMovement(event) {
     event.preventDefault();
     const accounttake= await cargarCuenta();
@@ -298,6 +305,15 @@ async function createTakeMovement(event) {
         if(accounttake._type==="STANDARD"){
         
         const timestamp = new Date().toISOString();
+        //TODO Utilizar la siguiente RegExp para validar que el importe pueda introducirse con separador de decimales y de miles.
+        const esAmountRegex = /^(?:\d{1,15}|\d{1,3}(?:\.\d{3}){1,4})(?:,\d{1,2})?$/;
+        /* Explanation for esAmountRegex:
+              (?:                                # integer part options
+                \d{1,15}                         # 1 to 15 digits without thousand separator
+                | \d{1,3}(?:\.\d{3}){1,4}        # 1–3 digits, then 1–4 groups of ".ddd"
+               )
+              (?:,\d{1,2})?                      # optional decimal with 1 or 2 digits
+        */
         const amount = parseFloat(document.getElementById("totaltake").value);
         const oldbalance = parseFloat(movements[movements.length-1].balance);
         const balance = oldbalance - amount;
@@ -329,6 +345,15 @@ async function createTakeMovement(event) {
 
     }if(accounttake._type==="CREDIT"){
         const timestamp = new Date().toISOString();
+        //TODO Utilizar la siguiente RegExp para validar que el importe pueda introducirse con separador de decimales y de miles.
+        const esAmountRegex = /^(?:\d{1,15}|\d{1,3}(?:\.\d{3}){1,4})(?:,\d{1,2})?$/;
+        /* Explanation for esAmountRegex:
+              (?:                                # integer part options
+                \d{1,15}                         # 1 to 15 digits without thousand separator
+                | \d{1,3}(?:\.\d{3}){1,4}        # 1–3 digits, then 1–4 groups of ".ddd"
+               )
+              (?:,\d{1,2})?                      # optional decimal with 1 or 2 digits
+        */
         const amount = parseFloat(document.getElementById("totaltake").value);
         const oldbalance = parseFloat(movements[movements.length-1].balance);
         let balance = oldbalance - amount;
@@ -416,7 +441,7 @@ async function putAccount() {
     const serializer = new XMLSerializer();
     const updatedXML = serializer.serializeToString(xmlDoc);
 
-    // 5. Haces el PUT con TODO el XML de <account>
+    // 5. Haces el PUT con el XML de <account>
     await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
         method: "PUT",
         headers: {
