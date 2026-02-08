@@ -1,7 +1,9 @@
 // VARIABLES GLOBALES (Rutas relativas para evitar errores de puerto)
 const SERVICE_URL = "/CRUDBankServerSide/webresources/account/customer/";
 const ACCOUNT_URL = "/CRUDBankServerSide/webresources/account/";
-
+/**
+ * @fixme UPDATE: Implementar la actualización del campo description de las cuentas, independientemente de su tipo, y, además del campo creditLine para las de crédito.
+ */
 document.addEventListener("DOMContentLoaded", () => {
 
     pageLoadHandler();
@@ -19,12 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const custIdRaw = sessionStorage.getItem("customer.id");
             if (!custIdRaw) return alert("Sesión expirada");
+            //TODO Utilizar la siguiente RegExp para validar que los importes (beginBalance y creditLine) pueda introducirse con separador de decimales y de miles.
+            const esAmountRegex = /^(?:\d{1,15}|\d{1,3}(?:\.\d{3}){1,4})(?:,\d{1,2})?$/;
+            /* Explanation for esAmountRegex:
+              (?:                                # integer part options
+                \d{1,15}                         # 1 to 15 digits without thousand separator
+                | \d{1,3}(?:\.\d{3}){1,4}        # 1–3 digits, then 1–4 groups of ".ddd"
+               )
+              (?:,\d{1,2})?                      # optional decimal with 1 or 2 digits
+             */
 
      
             const idLimpio = custIdRaw.replace(/[,.]/g, "").trim();
             const typeSelect = document.getElementById("accTypeSelect");
             const creditInput = document.getElementById("accCredit");
+            //FIXME: Al crear la cuenta el usuario puede introducir un saldo inicial. El saldo actual en la apertura de cuenta será igual a este saldo inicial.
 
+            //FIXME: Encapsular los datos de la nueva cuenta en un objeto de la clase Account.
             const nuevaCuenta = {
                 id: Math.floor(Math.random() * 100000000),
                 description: document.getElementById("accDesc").value,
@@ -138,7 +151,13 @@ function goToMovements(id, balance, credit,beginBalance) {
     sessionStorage.setItem("account.beginBalance", beginBalance);
     window.location.href = "movements.html";
 }
+/**
+ * 
+ * @param {type} id
+ * @return {undefined}
+ * @fixme DELETE: Solo se podrán borrar cuentas que no tengan movimientos.Controlar esta condición para no realizar petición de borrado al servidor y así evitar el HTTP 500 por violación de integridad referencial.
 
+ */
 async function deleteAccount(id) {
     if (confirm(`¿Eliminar cuenta ${id}?`)) {
         await fetch(ACCOUNT_URL + id, { method: "DELETE" });
