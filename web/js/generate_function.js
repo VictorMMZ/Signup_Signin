@@ -7,8 +7,8 @@
 
 const SERVICE_URL = "http://localhost:8080/CRUDBankServerSide/webresources/movement/";
 let movements;
-const idaccount = sessionStorage.getItem("account.id"); 
-const accountid = "account/" + idaccount;
+const idaccount =  2654785441 ;//sessionStorage.getItem("account.id"); 
+const accountid = "account/" + 2654785441;
 
 /**
  * Generator function that yields table rows
@@ -23,11 +23,60 @@ infoidaccount.innerHTML = `<p> Account ID:  ${idaccount} </p>`;
 
 const infoaccounttype= document.querySelector(".accounttype");
 
+// Función principal para ejecutar la búsqueda
+function buscarMovimientos() {
+    const inicioStr = document.getElementById("fechaInicio").value;
+    const finStr = document.getElementById("fechaFin").value;
+    const tablaBody = document.getElementById("tbodyMovements");
+
+    if (!movements) return; // Seguridad por si aún no han cargado los datos
+
+    const filtrados = movements.filter(mov => {
+        if (!inicioStr && !finStr) return true;
+
+        // IMPORTANTE: Como en el parseo guardaste la fecha ya formateada (DD/MM/YYYY),
+        // necesitamos convertirla de nuevo a algo que Date() entienda.
+        // Lo más seguro es usar los datos originales si los tuvieras, 
+        // pero vamos a reconstruir el objeto Date desde el string:
+        
+        const partes = mov.timestamp.split(', ')[0].split('/'); // Extrae [DD, MM, YYYY]
+        const horas = mov.timestamp.split(', ')[1]; // Extrae HH:MM:SS
+        const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}T${horas}`;
+        
+        const fechaMov = new Date(fechaISO);
+        const fechaInicio = inicioStr ? new Date(inicioStr) : new Date(0);
+        const fechaFin = finStr ? new Date(finStr) : new Date();
+
+        // Ajustamos horas para comparar solo días completos
+        fechaInicio.setHours(0, 0, 0, 0);
+        fechaFin.setHours(23, 59, 59, 999);
+
+        return fechaMov >= fechaInicio && fechaMov <= fechaFin;
+    });
+
+    tablaBody.innerHTML = "";
+    const generador = movementsRowGenerator(filtrados);
+    for (const fila of generador) {
+        tablaBody.appendChild(fila);
+    }
+}
+//metodo para sumar lo que haga falta 
+//const totalPeriodo = filtrados.reduce((acc, el) => acc + el.amount, 0);
+/*const totalIngresos = movements
+    .filter(mov => mov.description === "Deposit") // Primero seleccionamos
+    .reduce((acc, mov) => acc + mov.amount, 0);
+*/
+
+// Escuchar el click del botón
+document.getElementById("btnFiltrar").addEventListener("click", buscarMovimientos);
+
 const formateadorEU = new Intl.NumberFormat('es-ES', {
                     style: 'currency',
                     currency: 'EUR',
                     minimumFractionDigits: 2 // Asegura dos decimales
                     });
+
+
 
 
 // funcion para generar tablas 
@@ -53,17 +102,20 @@ function* movementsRowGenerator(movements) {
 }
 
  
- // funcion fetch para recuperar datos del servidor parseando a XML
-    async function fetchMovements() {
-        const response = await fetch(SERVICE_URL +`${accountid}`, {
-            method: "GET",
-            headers: {
-                "Accept": "application/xml"
-              }
-         });
-        const xmlText = await response.text();
-        return parseMovementsXML(xmlText);
-    }
+ // función fetch para recuperar datos del servidor parseando JSON
+async function fetchMovements() {
+    const response = await fetch(SERVICE_URL + `${accountid}`, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    const data = await response.json();
+
+    return parseMovementsJSON(data);
+}
+
     
     //funcion fetch con la ruta del movmiento a elimnar,pasando como parametro el id al llamar a la funcion
     async function fetchMovementsForRemove(deleteid) {
@@ -71,7 +123,7 @@ function* movementsRowGenerator(movements) {
             // metodo DELETE para eliminar del servidor y asi mismo de la base de datos
             method: "DELETE",
             headers: {
-                "Accept": "application/xml"
+                "Accept": "application/json"
               }
          });
        
@@ -112,6 +164,33 @@ async function confirmDelete(event){
     // Si se pulsa que no 
     console.log("Operación cancelada");
 }
+}
+
+function parseMovementsJSON(data) {
+
+    const list = Array.isArray(data) ? data : data.movements;
+
+    return list.map(m => {
+        const date = m.timestamp; // viene del JSON
+        const noFormDate = new Date(date);
+
+        const formatedDate = noFormDate.toLocaleString("es-ES", { 
+            year: "numeric",
+            month: "2-digit", 
+            day: "2-digit", 
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+
+        return {
+            id: m.id,
+            amount: m.amount,
+            description: m.description,
+            timestamp: formatedDate,
+            balance:m.balance
+        };
+    });
 }
 
 
@@ -165,42 +244,33 @@ async function confirmDelete(event){
       * Funcion para utilizar la cuenta que nos Adrian de cuentas y utilizar sus datos como si fuese un objeto 
       * 
       */
-     async function cargarCuenta() {
+async function cargarCuenta() {
     const response = await fetch(
         `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
         {
             method: "GET",
-            headers: { "Accept": "application/xml" }
+            headers: { "Accept": "application/json" }
         }
     );
 
-    const xmlText = await response.text();
- 
-    
+    const data = await response.json();
 
-    // Convertir XML → objeto Account
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlText, "application/xml");
-
+    // Convertir JSON → objeto Account
     account = new Account(
-        xml.getElementsByTagName("id")[0].textContent,
-        xml.getElementsByTagName("description")[0].textContent,
-        xml.getElementsByTagName("balance")[0].textContent,
-        xml.getElementsByTagName("creditLine")[0].textContent,
-        xml.getElementsByTagName("beginBalance")[0].textContent,
-        xml.getElementsByTagName("beginBalanceTimestamp")[0].textContent,
-        xml.getElementsByTagName("type")[0].textContent
+        data.id,
+        data.description,
+        data.balance,
+        data.creditLine,
+        data.beginBalance,
+        data.beginBalanceTimestamp,
+        data.type
     );
-    
-    
-   
-   infoaccounttype.innerHTML=`<p> Type ${account._type}</p>`;
-   
+
+    infoaccounttype.innerHTML = `<p> Type ${account._type}</p>`;
 
     return account;
-
-
 }
+
 
 /*
  * llamamos al funcion ya qu quermos los datos de la cuenta si o si
@@ -264,17 +334,27 @@ async function createDepositMovement(event) {
 
     try {
         const timestamp = new Date().toISOString();
-        const amount = parseFloat(document.getElementById("totaldepo").value);
+      
+        const valor =document.getElementById("totaldepo").value;
   if (movements.length>0){
       oldbalance=parseFloat(movements[movements.length - 1].balance);
   }else{
       oldbalance=0;
   }
+   const regexDineroComplejo = /^\d{1,3}(\.?\d{3})*([,.]\d{1,2})?$/;
+        if (!regexDineroComplejo.test(valor)) {
+            throw new Error("Formato no válido. Use: 1.000,00 o 1000,00 o 1000.00");
+        }
+        let valorLimpio = valor.replace(/\./g, "").replace(",", ".");
+        
+        const amount=parseFloat(valorLimpio);
+        
+        if (amount<=0) throw new Error("Amount must be a possitive number");
+
         const balance = amount + oldbalance;
         const description = "Deposit";
 
-        if (isNaN(amount)) throw new Error("Amount must be a number");
-         if (amount<=0) throw new Error("Amount must be a possitive number");
+      
 
         // Construimos el XML
         const xmlBody =
@@ -455,3 +535,22 @@ async function putAccount() {
         body: updatedXML
     });
     }
+    
+    
+   /* async function putAccount() {
+    // 1. Cargamos la cuenta actualizada (o usamos la instancia global 'account')
+    // Actualizamos el balance localmente con el del último movimiento
+    if (movements.length > 0) {
+        account._balance = movements[movements.length - 1].balance;
+    }
+
+    // 2. Hacemos el PUT enviando el JSON generado por tu método toJSON()
+    await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(account.toJSON()) // <--- Aquí usas tu método de clase
+    });
+}*/
