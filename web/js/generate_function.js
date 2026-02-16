@@ -535,22 +535,43 @@ async function putAccount() {
         body: updatedXML
     });
     }
+    /*
     
-    
-   /* async function putAccount() {
-    // 1. Cargamos la cuenta actualizada (o usamos la instancia global 'account')
-    // Actualizamos el balance localmente con el del último movimiento
-    if (movements.length > 0) {
-        account._balance = movements[movements.length - 1].balance;
-    }
+ async function putAccount() {
+    try {
+        // 1. Obtenemos la cuenta actualizada del servidor (RA7-c)
+        const response = await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" } // Pedimos JSON
+        });
 
-    // 2. Hacemos el PUT enviando el JSON generado por tu método toJSON()
-    await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(account.toJSON()) // <--- Aquí usas tu método de clase
-    });
+        if (!response.ok) throw new Error("Error al recuperar la cuenta");
+
+        // 2. Parseamos a objeto JS (RA2-d)
+        const accountData = await response.json();
+
+        // 3. Actualizamos el balance (RA4-d: Manejo de colecciones)
+        // Tomamos el balance del último movimiento de nuestra colección
+        if (movements && movements.length > 0) {
+            accountData.balance = movements[movements.length - 1].balance;
+        }
+
+        // 4. Enviamos la actualización (RA7-f: Uso de formato JSON)
+        const putResponse = await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(accountData) // Serialización JSON
+        });
+
+        if (putResponse.ok) {
+            console.log("Cuenta actualizada correctamente vía JSON");
+        }
+
+    } catch (error) {
+        // RA3-h: Depuración y gestión de errores
+        console.error("Fallo en la sincronización:", error.message);
+    }
 }*/
