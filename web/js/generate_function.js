@@ -34,10 +34,10 @@ function buscarMovimientos() {
     const filtrados = movements.filter(mov => {
         if (!inicioStr && !finStr) return true;
 
-        // IMPORTANTE: Como en el parseo guardaste la fecha ya formateada (DD/MM/YYYY),
+        // IMPORTANTE:
         // necesitamos convertirla de nuevo a algo que Date() entienda.
-        // Lo más seguro es usar los datos originales si los tuvieras, 
-        // pero vamos a reconstruir el objeto Date desde el string:
+        // Lo más seguro es usar los datos originales, 
+        // vamos a reconstruir el objeto Date desde el string:
         
         const partes = mov.timestamp.split(', ')[0].split('/'); // Extrae [DD, MM, YYYY]
         const horas = mov.timestamp.split(', ')[1]; // Extrae HH:MM:SS
@@ -539,7 +539,7 @@ async function putAccount() {
     
  async function putAccount() {
     try {
-        // 1. Obtenemos la cuenta actualizada del servidor (RA7-c)
+        // 1. Obtenemos la cuenta actualizada del servidor 
         const response = await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`, {
             method: "GET",
             headers: { "Accept": "application/json" } // Pedimos JSON
@@ -547,7 +547,7 @@ async function putAccount() {
 
         if (!response.ok) throw new Error("Error al recuperar la cuenta");
 
-        // 2. Parseamos a objeto JS (RA2-d)
+        // 2. Parseamos a objeto JS 
         const accountData = await response.json();
 
         // 3. Actualizamos el balance (RA4-d: Manejo de colecciones)
@@ -556,7 +556,7 @@ async function putAccount() {
             accountData.balance = movements[movements.length - 1].balance;
         }
 
-        // 4. Enviamos la actualización (RA7-f: Uso de formato JSON)
+        // 4. Enviamos la actualización 
         const putResponse = await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
             method: "PUT",
             headers: {
