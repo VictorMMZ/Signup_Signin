@@ -401,7 +401,14 @@ async function createTakeMovement(event) {
         
         const timestamp = new Date().toISOString();
         const amount = parseFloat(document.getElementById("totaltake").value);
-        const oldbalance = parseFloat(movements[movements.length-1].balance);
+        let oldbalance;
+        if (movements.length>0){
+            oldbalance=parseFloat(movements[movements.length - 1].balance);
+            
+        }else{
+            oldbalance=sessionStorage.getItem("account._beginBalance") || 0;
+            
+        }
         const balance = oldbalance - amount;
         const description = "Take";
         if (isNaN(amount)) throw new Error("Amount must be a number");
