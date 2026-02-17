@@ -54,47 +54,67 @@ class Account{
  * @type {type}
  * @todo Cambiar el nombre de la clase de Movements a Movement y quitar el _ del nombre de los atributos
  */
-class Movements{
-    
-     _id;
-     _timestamp;
-     _amount;
-     _balance;
-     _description;
+
+//Clase Movement renombrada
+class Movement{
+    // atributos sin guión bajo ,vi que en esta version se utilizaban guines bajos como señal de privacidad por eso estaban puestos, no me dejaba poner #.
+     id;
+     timestamp;
+     amount;
+     balance;
+     description;
      
-    constructor(id, timestamp, amount, balance, description) {
-        this._id = id; 
-        this._timestamp = timestamp; 
-        this._amount = amount;
-        this._balance = balance; 
-        this._description = description; }
+    constructor(timestamp, amount, balance, description) {
+        
+        this.timestamp = timestamp; 
+        this.amount = amount;
+        this.balance = balance; 
+        this.description = description; }
     
     // --- GETTERS ---
      get id() {
-         return this._id; 
+         return this.id; 
      }
      get timestamp() {
-         return this._timestamp; 
+         return this.timestamp; 
      }
      get amount() {
-         return this._amount; 
+         return this.amount; 
      }
      get balance() {
-         return this._balance;
+         return this.balance;
      }
      get description() {
-         return this._description; 
+         return this.description; 
      }
      
     toJSON() {
     return {
-        id: this._id,
-        timestamp: this._timestamp,
-        amount:this._amount,
-        balance:this._balance,
-        description:this._description
+        id: this.id,
+        timestamp: this.timestamp,
+        amount:this.amount,
+        balance:this.balance,
+        description:this.description
     };
 }
 
-    
+
+// al tener yo XML en vez de Json para utilizar el objeto y convertirlo en XML construyo el cuerpo como un metodo 
+    toXML() {
+        return `
+            <movement>
+                <timestamp>${this.timestamp}</timestamp>
+                <amount>${this.amount}</amount>
+                <balance>${this.balance}</balance>
+                <description>${this.description}</description>
+            </movement>
+        `;
+    }
 }
+
+
+
+
+
+
+    

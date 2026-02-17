@@ -5,7 +5,9 @@
  */
 
 
-const SERVICE_URL = "http://localhost:8080/CRUDBankServerSide/webresources/movement/";
+
+
+const SERVICE_URL = "/CRUDBankServerSide/webresources/movement/";
 let movements;
 const idaccount = sessionStorage.getItem("account.id"); 
 const accountid = "account/" + idaccount;
@@ -112,6 +114,8 @@ async function confirmDelete(event){
 
 
 
+
+
 // funcion de Parseo de los datos XML
     function parseMovementsXML(xmlText) {
         const parser = new DOMParser();
@@ -160,7 +164,7 @@ async function confirmDelete(event){
      }
      async function cargarCuenta() {
     const response = await fetch(
-        `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
+        `/CRUDBankServerSide/webresources/account/${idaccount}`,
         {
             method: "GET",
             headers: { "Accept": "application/xml" }
@@ -241,32 +245,53 @@ btnMostrarDepo.addEventListener("click", () => {
 // Call on page load
     buildMovementsTable();
 
-
+/**
+ * 
+ * @param {type} event
+ * @return {undefined}
+ * @fixme Encapsular los datos del movimiento en un nuevo objeto Movement antes de enviarlos al servidor.
+ */
 async function createDepositMovement(event) {
     event.preventDefault();
 
     try {
         const timestamp = new Date().toISOString();
-        const amount = parseFloat(document.getElementById("totaldepo").value);
-  if (movements.length>0){
-      oldbalance=parseFloat(movements[movements.length - 1].balance);
-  }else{
-      oldbalance=0;
-  }
+        const esAmountRegex = /^(?:\d{1,15}|\d{1,3}(?:\.\d{3}){1,4})(?:,\d{1,2})?$/;
+        /* Explanation for esAmountRegex:
+              (?:                                # integer part options
+                \d{1,15}                         # 1 to 15 digits without thousand separator
+                | \d{1,3}(?:\.\d{3}){1,4}        # 1–3 digits, then 1–4 groups of ".ddd"
+               )
+              (?:,\d{1,2})?                      # optional decimal with 1 or 2 digits
+        */
+       
+       //vairbale a la que le paso la expresion regular
+       const valor= document.getElementById("totaldepo").value;
+       if (!esAmountRegex.test(valor)) {
+            throw new Error("Formato no válido");
+        }
+        // cambio el valor de los "." y "," para que estos sean validos 
+        let valorLimpio = valor.replace(/\./g, "").replace(",", ".");
+        const amount = parseFloat(valorLimpio);
+        ;
+            if (movements.length>0){
+                    oldbalance=parseFloat(movements[movements.length - 1].balance);
+        }else{
+                oldbalance=0;
+        }
         const balance = amount + oldbalance;
         const description = "Deposit";
 
         if (isNaN(amount)) throw new Error("Amount must be a number");
          if (amount<=0) throw new Error("Amount must be a possitive number");
+         
+         
+         //Creo el nuevo objeto de la clase Movement
+        const  movement=new Movement(timestamp, amount, balance, description);
 
-        // Construimos el XML
-        const xmlBody =
-            `<movement>
-                <timestamp>${timestamp}</timestamp>
-                <amount>${amount}</amount>
-                <balance>${balance}</balance>
-                <description>${description}</description>
-            </movement>`;
+        // Construimos el XML a partir del nuevo objeto quitando la creacion del body a mano por atributos y poniendola como método en la clase Movement.
+        const xmlBody = movement.toXML();
+            
 
         const response = await fetch(SERVICE_URL + `${idaccount}`, {
             method: "POST",
@@ -290,6 +315,16 @@ async function createDepositMovement(event) {
     
 }
 
+
+
+    
+
+    formDepo.addEventListener("submit", createDepositMovement);
+
+
+/**
+* @fixme Encapsular los datos del movimiento en un nuevo objeto Movement antes de enviarlos al servidor.
+*/
 async function createTakeMovement(event) {
     event.preventDefault();
     const accounttake= await cargarCuenta();
@@ -298,21 +333,37 @@ async function createTakeMovement(event) {
         if(accounttake._type==="STANDARD"){
         
         const timestamp = new Date().toISOString();
-        const amount = parseFloat(document.getElementById("totaltake").value);
+        //TODO Utilizar la siguiente RegExp para validar que el importe pueda introducirse con separador de decimales y de miles.
+        const esAmountRegex = /^(?:\d{1,15}|\d{1,3}(?:\.\d{3}){1,4})(?:,\d{1,2})?$/;
+        /* Explanation for esAmountRegex:
+              (?:                                # integer part options
+                \d{1,15}                         # 1 to 15 digits without thousand separator
+                | \d{1,3}(?:\.\d{3}){1,4}        # 1–3 digits, then 1–4 groups of ".ddd"
+               )
+              (?:,\d{1,2})?                      # optional decimal with 1 or 2 digits
+        */
+       //vairbale a la que le paso la expresion regular
+       const valor= document.getElementById("totaltake").value;
+       if (!esAmountRegex.test(valor)) {
+            throw new Error("Formato no válido");
+        }
+        // cambio el valor de los "." y "," para que estos sean validos 
+        let valorLimpio = valor.replace(/\./g, "").replace(",", ".");
+        const amount = parseFloat(valorLimpio);
         const oldbalance = parseFloat(movements[movements.length-1].balance);
         const balance = oldbalance - amount;
         const description = "Take";
         if (isNaN(amount)) throw new Error("Amount must be a number");
         if (amount<=0) throw new Error("Amount must be a possitive number");
        if (oldbalance<amount) throw new Error ("the amount exceeds the balance");
+       
+        //Creo el nuevo objeto de la clase 
+        const movement=new Movement(timestamp, amount, balance, description);
+
+        // Construimos el XML a partir del nuevo objeto quitando la creacion del body a mano por atributos.
+        const xmlBody = movement.toXML();
         // Construimos el XML
-        const xmlBody =
-            `<movement>
-                <timestamp>${timestamp}</timestamp>
-                <amount>${amount}</amount>
-                <balance>${balance}</balance>
-                <description>${description}</description>
-            </movement>`;
+       
          
         const response = await fetch(SERVICE_URL + `${idaccount}`, {
             method: "POST",
@@ -329,7 +380,23 @@ async function createTakeMovement(event) {
 
     }if(accounttake._type==="CREDIT"){
         const timestamp = new Date().toISOString();
-        const amount = parseFloat(document.getElementById("totaltake").value);
+        //TODO Utilizar la siguiente RegExp para validar que el importe pueda introducirse con separador de decimales y de miles.
+        const esAmountRegex = /^(?:\d{1,15}|\d{1,3}(?:\.\d{3}){1,4})(?:,\d{1,2})?$/;
+        /* Explanation for esAmountRegex:
+              (?:                                # integer part options
+                \d{1,15}                         # 1 to 15 digits without thousand separator
+                | \d{1,3}(?:\.\d{3}){1,4}        # 1–3 digits, then 1–4 groups of ".ddd"
+               )
+              (?:,\d{1,2})?                      # optional decimal with 1 or 2 digits
+        */
+          const valor= document.getElementById("totaltake").value;
+       if (!esAmountRegex.test(valor)) {
+            throw new Error("Formato no válido");
+        }
+        
+        // cambio el valor de los . y comas para que estos sean validos 
+        let valorLimpio = valor.replace(/\./g, "").replace(",", ".");
+        const amount = parseFloat(valorLimpio);
         const oldbalance = parseFloat(movements[movements.length-1].balance);
         let balance = oldbalance - amount;
         const description = "Take";
@@ -339,13 +406,11 @@ async function createTakeMovement(event) {
         if (amount<=0) throw new Error("Amount must be a possitive number");
         if (creditxbalance<amount) throw new Error ("the amount exceeds the balance and credit");
        
-        const xmlBody =
-            `<movement>
-                <timestamp>${timestamp}</timestamp>
-                <amount>${amount}</amount>
-                <balance>${balance}</balance>
-                <description>${description}</description>
-            </movement>`;
+         //Creo el nuevo objeto de la clase Movement
+        const movement=new Movement(timestamp, amount, balance, description);
+
+        // Construimos el XML a partir del nuevo objeto quitando la creacion del body a mano por atributos.
+        const xmlBody = movement.toXML();
 
         const response = await fetch(SERVICE_URL + `${idaccount}`, {
             method: "POST",
@@ -374,6 +439,10 @@ async function createTakeMovement(event) {
 
 }
 
+
+
+    formTake.addEventListener("submit", createTakeMovement);
+
 async function showCredit(){
    
     const accountcredit= await cargarCuenta();
@@ -395,7 +464,7 @@ showCredit();
 async function putAccount() {
     // 1. Pedimos la cuenta al servidor en XML
     const response = await fetch(
-        `http://localhost:8080/CRUDBankServerSide/webresources/account/${idaccount}`,
+        `/CRUDBankServerSide/webresources/account/${idaccount}`,
         {
             method: "GET",
             headers: { "Accept": "application/xml" }
@@ -416,8 +485,8 @@ async function putAccount() {
     const serializer = new XMLSerializer();
     const updatedXML = serializer.serializeToString(xmlDoc);
 
-    // 5. Haces el PUT con TODO el XML de <account>
-    await fetch(`http://localhost:8080/CRUDBankServerSide/webresources/account`, {
+    // 5. Haces el PUT con el XML de <account>
+    await fetch(`/CRUDBankServerSide/webresources/account`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/xml",

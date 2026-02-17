@@ -53,7 +53,7 @@ msgBox.style.display = 'none';
 
   
  
-        const baseUrl = "http://localhost:8080/CRUDBankServerSide/webresources/customer/sigin/";
+        const baseUrl = "/CRUDBankServerSide/webresources/customer/sigin/";
  
         const  newpath =baseUrl +
                     `${encodeURIComponent(valueTfEmail)}/${encodeURIComponent(valueTfPassword)}`;

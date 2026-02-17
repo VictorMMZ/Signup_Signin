@@ -11,14 +11,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../css/style.css">
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    
-    color: #fff;
-  }
-  </style>
+
     </head>
     
 <body class="moves">
@@ -76,7 +69,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
             </thead>
             <tbody id="tbodyMovements"></tbody>
           </table>
-
+<!--quitados los onxxxx y añadidos en el js los handlers -->
         </div> 
        <form id="formDeposit">
             <p>¿Cuanto dinero desea ingresar?</p>
@@ -84,7 +77,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <input type="text" id="totaldepo" required>
                 <input type="hidden" id="deposit_1" name="deposit_1" value="Deposit">
                 
-                <button type="submit" id="depositbutton" onclick="createDepositMovement(event)">Confirm</button>
+                <button type="submit" id="depositbutton">Confirm</button>
                 
         </form>
          <form id="formTake">
@@ -92,7 +85,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <label for="totaltake">Cantidad (€):</label>
                 <input type="text" id="totaltake" name="totaltake" required>
                 <input type="hidden" id="take_1" name="take_1" value="Take">
-                <button type="submit" id="takebutton" onclick="createTakeMovement(event)">Confirm</button>
+                <button type="submit" id="takebutton" >Confirm</button>
             
         </form>
 
