@@ -1,122 +1,109 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Neo-Bank | Mis Cuentas</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<!--FIXME Añadir elementos para que el usuario introducir un saldo inicial al crear la cuenta-->
-<!--TODO Mover todos los estilos en línea a CSS externa-->
-<!--TODO Quitar todos los atributos onxxxxxx y añadir handlers en el correspondiente script externo-->
-<body >
-    <div class="content">
-        <header class="top-bar">
-    <div class="logo-area"><img src="../images/logo.jpg" class="logo-img"></div>
-    <div class="infousu"></div> 
-    <nav class="nav-bar">
-        <a href="signin.html" class="nav-item" onclick="sessionStorage.clear()">🚪 Cerrar Sesión</a>
-    </nav>
-</header>
-
-        <main>
-            <div class="account-welcome-card" style="background: linear-gradient(90deg, #1e1e2e, #2d2d44); padding: 25px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #4f46e5;">
-                <div>
-                    <h2 style="color: white; margin: 0;">Gestión de Cuentas</h2>
-                    <p style="color: #9ca3af; margin: 5px 0 0 0;">Visualiza el estado global de tus finanzas.</p>
+    <head>
+        <meta charset="UTF-8">
+        <title>Neo-Bank | Mis Cuentas</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <div class="content">
+            <header class="top-bar">
+                <div class="logo-area">
+                    <img src="../images/logo.jpg" class="logo-img" alt="Logo Neo-Bank">
                 </div>
-                <div style="text-align: right;">
-                    <span style="color: #9ca3af; font-size: 0.9em;">Balance Total Global</span>
-                    <h1 id="totalBalanceTop" style="color: #00ff00; margin: 0; font-size: 2.5em;">0,00 €</h1>
+                <div class="infousu"></div>
+                <nav class="nav-bar">
+                    <a href="signin.html" class="nav-item" onclick="sessionStorage.clear()">🚪 Cerrar Sesión</a>
+                </nav>
+            </header>
+
+            <main>
+                <div class="account-welcome-card">
+                    <div>
+                        <h2>Gestión de Cuentas</h2>
+                        <p>Visualiza el estado global de tus finanzas.</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="balance-label">Balance Total Global</span>
+                        <h1 id="totalBalanceTop">0,00 €</h1>
+                    </div>
                 </div>
-            </div>
 
-            <table id="usersTable">
-                <thead>
-                    <tr>
-                        <th>ID Cuenta</th>
-                        <th>Descripción</th>
-                        <th>Tipo</th>
-                        <th>Crédito</th>
-                        <th>Fecha Apertura</th>
-                        <th>Saldo Actual</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    </tbody>
-            </table>
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID Cuenta</th>
+                            <th>Descripción</th>
+                            <th>Tipo</th>
+                            <th>Crédito</th>
+                            <th>Fecha Apertura</th>
+                            <th>Saldo Actual</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        </tbody>
+                </table>
 
-            <div class="form-container" style="margin-top: 40px; padding: 30px; border: 1px solid #4f46e5; background: rgba(30, 30, 46, 0.8);">
-                <h3 style="color: #fff; margin-bottom: 20px;">➕ Abrir Nueva Cuenta</h3>
-                <form id="formAccount" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;">
-                    <div>
-                        <label style="color: #9ca3af; display: block; margin-bottom: 5px;">Descripción</label>
-                        <input type="text" id="accDesc" placeholder="Ej. Ahorros Navidad" required style="width: 250px;">
+                <div class="form-container">
+                    <h3>➕ Abrir Nueva Cuenta</h3>
+                    <form id="formAccount" class="form-group-row">
+                        <div class="form-control-group">
+                            <label>Descripción</label>
+                            <input type="text" id="accDesc" class="input-desc" placeholder="Ej. Ahorros Navidad" required>
+                        </div>
+                        
+                        <div class="form-control-group">
+                            <label>Tipo de Cuenta</label>
+                            <select id="accTypeSelect" class="input-short">
+                                <option value="STANDARD">Standard</option>
+                                <option value="CREDIT">Crédito</option>
+                            </select>
+                        </div>
+
+                        <div id="divCred" class="form-control-group" style="display:none;">
+                            <label>Límite Crédito (€)</label>
+                            <input type="text" id="accCredit" class="input-short" value="0,00">
+                        </div>
+
+                        <div class="form-control-group">
+                            <label>Saldo Inicial (€)</label>
+                            <input type="text" id="accBeginBalance" class="input-short" value="0,00">
+                        </div>
+
+                        <button type="submit" class="neon-button" style="height: 45px;">CREAR CUENTA</button>
+                    </form>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>Contact</h3>
+                        <p>Email: contacto@quantummbank.com</p>
+                        <p>Tel: +34 921 345 887</p>
                     </div>
-                    
-                    <div>
-                        <label style="color: #9ca3af; display: block; margin-bottom: 5px;">Tipo de Cuenta</label>
-                        <select id="accTypeSelect" style="width: 150px; padding: 10px; background: #0f172a; color: white; border: 1px solid #4f46e5;">
-                            <option value="STANDARD">Standard</option>
-                            <option value="CREDIT">Crédito</option>
-                        </select>
+                    <div class="footer-section">
+                        <h3>Links</h3>
+                        <a href="#">Login</a>
+                        <a href="#">About us</a>
+                        <a href="#">Services</a>
                     </div>
-
-                    <div id="divCred" style="display:none;">
-                        <label style="color: #9ca3af; display: block; margin-bottom: 5px;">Límite Crédito (€)</label>
-                        <input type="number" id="accCredit" value="0.0" step="100" style="width: 150px;">
+                    <div class="footer-section">
+                        <h3>Follow us</h3>
+                        <div class="socials">
+                            <a href="#">Facebook</a>
+                            <a href="#">Instagram</a>
+                            <a href="#">Twitter</a>
+                        </div>
                     </div>
-
-                    <button type="submit" class="neon-button" style="height: 45px;">CREAR CUENTA</button>
-                </form>
-            </div>
-        </main>
-        
-             <footer class="footer">
-    <div class="footer-content">
-
-        <div class="footer-section">
-            <h3>Contact</h3>
-            <p>Email: contacto@quantummbank.com</p>
-            <p>Tel: +34 921 345 887</p>
+                </div>
+                <div class="footer-bottom">
+                    © 2026 all rights reserved
+                </div>
+            </footer>
         </div>
-
-        <div class="footer-section">
-            <h3>Links</h3>
-            <a href="#">Login</a>
-            <a href="#">About us</a>
-            <a href="#">Services</a>
-        </div>
-
-        <div class="footer-section">
-            <h3>Follow us</h3>
-            <div class="socials">
-                <a href="#">Facebook</a>
-                <a href="#">Instagram</a>
-                <a href="#">Twitter</a>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="footer-bottom">
-        © 2026 all rights reserved
-    </div>
-</footer>
-    </div>
-    
-    
-
-    <script src="../js/clases.js"></script>
-    <script src="../js/account.js"></script>
-    <!--TODO Mover el código JS siguiente a un script-->
-    <script>
-        // Lógica visual para el formulario
-        const typeSelect = document.getElementById("accTypeSelect");
-        const divCred = document.getElementById("divCred");
-        typeSelect.addEventListener("change", () => {
-            divCred.style.display = typeSelect.value === "CREDIT" ? "block" : "none";
-        });
-    </script>
-</body>
+        <script src="../js/clases.js"></script>
+        <script src="../js/account.js"></script>
+    </body>
 </html>

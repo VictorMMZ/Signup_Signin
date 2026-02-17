@@ -1,14 +1,4 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/javascript.js to edit this template
- * 
- * Autor:Victor Marrero 
- * Date:11/01/2026
- */
-
-//Vamos a crear las clases que utilizaremos para esta segunda practica CRUD
-
-class Account{
+class Account {
     _id
     _description
     _balance
@@ -16,9 +6,9 @@ class Account{
     _beginBalance
     _beginBalanceTimestamp
     _type
-    
-    
-    constructor(id,description,balance,creditLine,beginBalance,beginBalanceTimestamp,type){
+    _customerId   
+
+    constructor(id, description, balance, creditLine, beginBalance, beginBalanceTimestamp, type, customerId) {
         this._id = id;
         this._description = description;
         this._balance = balance;
@@ -26,9 +16,10 @@ class Account{
         this._beginBalance = beginBalance;
         this._beginBalanceTimestamp = beginBalanceTimestamp;
         this._type = type;
+        this._customerId = customerId; 
     }
-      // AÑADIDO: Método toJSON para Account
-    // Esto mapea tus propiedades internas (_prop) a las que espera el servidor (prop)
+
+
     toJSON() {
         return {
             id: this._id,
@@ -37,10 +28,14 @@ class Account{
             creditLine: this._creditLine,
             beginBalance: this._beginBalance,
             beginBalanceTimestamp: this._beginBalanceTimestamp,
-            type: this._type
+            type: this._type,
+            customers: [
+                { id: this._customerId }  
+            ]
         };
     }
 
+    // GETTERS
     getId() { return this._id; }
     getDescription() { return this._description; }
     getBalance() { return this._balance; }
@@ -48,7 +43,13 @@ class Account{
     getBeginBalance() { return this._beginBalance; }
     getBeginBalanceTimestamp() { return this._beginBalanceTimestamp; }
     getType() { return this._type; }
+
+    // ✏️ SOLO lo que necesitas para editar descripción
+    setDescription(newDescription) {
+        this._description = newDescription;
+    }
 }
+
 
 class Movements{
     
